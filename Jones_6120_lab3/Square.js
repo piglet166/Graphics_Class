@@ -31,15 +31,8 @@ window.onload = function init() {
 		vec2(  0,  1 ),
         vec2(  1,  0 ),
         vec2( -1,  0 ),
-        vec2(  0, -1 ),
-		//added additional verticies for additional shapes
-		//vec2(  1,  0 ),
-		//vec2( -1,  0 ),
-		//vec2(  0,  0 ),//
-		//vec2(  0,  1 ),//
-        //vec2(  1,  0 ),
-        //vec2(  0, -1 ),
-        //vec2( -1,  0 )
+        vec2(  0, -1 )
+		
     ];
 	
 	var index = [
@@ -48,6 +41,8 @@ window.onload = function init() {
 		0, 1, 2, 3, 
 		1, 2
 	];
+	
+	var points = [];
 	
 	//added enough colors for all the different verticies
 	var colors = [
@@ -101,6 +96,9 @@ window.onload = function init() {
     // Initialize event handlers
 	
 	//added user input.  Use the number 1 - 4 to change shapes.
+	
+	//added submit button's functionality to the init method
+	getWorldCintervals();
     
     window.onkeydown = function(event) {
         var key = String.fromCharCode(event.keyCode);
@@ -163,7 +161,13 @@ function getWorldCintervals(){
 	WX_min = document.getElementById( "Xmin" ).value;
 	WY_min = document.getElementById( "Ymin" ).value;
 	WX_max = document.getElementById( "Xmax" ).value;
-	WY_max = document.getElementById( "Ymax" ).value; 
+	WY_max = document.getElementById( "Ymax" ).value;
+	
+	setPointArr(WX_min, WY_min, WX_max, WY_max);
+}
+
+function setPointArr(WX_min, WY_min, WX_max, WY_max){
+	var points;
 }
 
 //calculates the user inputed canvas min and max coords
@@ -203,6 +207,50 @@ function worldToNDC(e, wx, wy){
 	'World Coords: ' + wx + " " + wy +'\n' +
 	'NDC Coords: ' + ndc_x + ' , ' + ndc_y;
 };
+
+function drawUIButtons(switchInt){
+	switch(switchInt){
+		case '0':
+			mouseDrag(true);
+			setPoints(false);
+			break;
+		case '1':
+			mouseDrag(false);
+			setPoints(true);
+			break;
+		default:
+			console.log('Something is wrong with the GUI');
+	}
+}
+
+function mouseDrag(switchFlag){
+	if(switchFlag){
+		console.log("mg switched on");
+	}else{
+		console.log("mg switched off");
+	}
+}
+
+function setPoints(switchFlag){
+	if(switchFlag){
+		console.log("dp switched on");
+		window.addEventListener("mousedown", drawPoints(e));
+	}else{
+		console.log("dp switched off");
+	}
+}
+
+function drawPoints(e){
+	var x = e.clientX;
+	var y = e.clientY;
+	var wx;
+	var wy;
+	
+	wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
+	wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
+	
+	var point = vec2(wx, wy);
+}
 
 function render() {
     gl.clear( gl.COLOR_BUFFER_BIT );
