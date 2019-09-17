@@ -6,7 +6,7 @@
 <script id="vertex-shader" type="x-shader/x-vertex">
 
 // vertex position
-attribute vec4 vPosition;
+attribute vec2 vPosition;
 
 // Need this when you have vertex colors
 attribute vec4 vColor; 
@@ -15,12 +15,18 @@ attribute vec4 vColor;
 varying vec4 fColor;
 //
 
+uniform vec4 uniHolder;
+
 void main()
 {
 // if you are using vertex colors you need to assign it to fColor
 	fColor = vColor;
+	
+	float ndc_x = -1.0 + 2.0 * (vPosition.x - (uniHolder.x))/(uniHolder.z - uniHolder.y);
+	float ndc_y = -1.0 + 2.0 * (vPosition.y - (uniHolder.y))/(uniHolder.w - uniHolder.y);
 
-	gl_Position = vPosition;
+	gl_Position = vec4(ndc_x, -ndc_y, 0.0, 1.0);
+	gl_PointSize = 10.0;
 }
 </script>
 
@@ -36,7 +42,7 @@ void main()
     gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
 
 // use this if you are getting colors from vertex shader 
-	gl_FragColor = fColor;
+	//gl_FragColor = fColor;
 }
 </script>
 

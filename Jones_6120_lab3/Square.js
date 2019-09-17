@@ -7,6 +7,11 @@ var WX_min;
 var WY_min;
 var WX_max;
 var WY_max;
+var u_wc;
+
+var points = [];
+var vBuffer;
+var program;
 
 window.onload = function init() {
 
@@ -23,7 +28,7 @@ window.onload = function init() {
 
     //  Load shaders and initialize attribute buffers
     
-    var program = initShaders( gl, "vertex-shader", "fragment-shader" );
+    program = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program );
 
     var vertices = [
@@ -42,8 +47,6 @@ window.onload = function init() {
 		1, 2
 	];
 	
-	var points = [];
-	
 	//added enough colors for all the different verticies
 	var colors = [
 		vec4(1.0, 0.0, 0.0, 1.0),
@@ -58,27 +61,14 @@ window.onload = function init() {
 		vec4(0.0, 0.0, 1.0, 1.0),
 		vec4(1.0, 0.0, 1.0, 1.0)
 	];
+	
+	u_wc = gl.getUniformLocation(program, "uniHolder");
 
     // Create a buffer to hold the  vertices
-    var vBuffer = gl.createBuffer();
+    vBuffer = gl.createBuffer();
 
 	// bind it to make it active
-    gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
-
-	// send the data as an array to GL
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);
-
-    				// Associate out shader variables with our data buffer
-	
-	// get a location to the vertex position's shader variable ('vPosition')
-    var vPosition = gl.getAttribLocation( program, "vPosition");
-	
-	// specifies the vertex attribute information (in an array), used
-	// for rendering 
-    gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0);
-
-	// enable this attribute, with the given attribute name
-    gl.enableVertexAttribArray(vPosition);
+    
 	
 	var iBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBuffer);
@@ -158,10 +148,10 @@ window.onload = function init() {
 
 //activated by clicking on the submit button
 function getWorldCintervals(){
-	WX_min = document.getElementById( "Xmin" ).value;
-	WY_min = document.getElementById( "Ymin" ).value;
-	WX_max = document.getElementById( "Xmax" ).value;
-	WY_max = document.getElementById( "Ymax" ).value;
+	WX_min = parseFloat(document.getElementById( "Xmin" ).value);
+	WY_min = parseFloat(document.getElementById( "Ymin" ).value);
+	WX_max = parseFloat(document.getElementById( "Xmax" ).value);
+	WY_max = parseFloat(document.getElementById( "Ymax" ).value);
 	
 	setPointArr(WX_min, WY_min, WX_max, WY_max);
 }
@@ -219,7 +209,7 @@ function drawUIButtons(switchInt){
 			setPoints(true);
 			break;
 		default:
-			console.log('Something is wrong with the GUI');
+			console.log('Something is wrong with the Switch');
 	}
 }
 
@@ -234,28 +224,46 @@ function mouseDrag(switchFlag){
 function setPoints(switchFlag){
 	if(switchFlag){
 		console.log("dp switched on");
-		window.addEventListener("mousedown", drawPoints(e));
+		window.onclick = function(event){
+			var x = event.clientX;
+			var y = event.clientY;
+			var wx;
+			var wy;
+	
+			wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
+			wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
+			console.log(wx, wy);
+	
+			var point = vec2(wx, wy);
+			points.push(point);
+			gl.uniform4fv(u_wc, [WX_min, WY_min, WX_max, WY_max]);
+	
+			render();
+		};
 	}else{
 		console.log("dp switched off");
 	}
 }
 
-function drawPoints(e){
-	var x = e.clientX;
-	var y = e.clientY;
-	var wx;
-	var wy;
-	
-	wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
-	wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
-	
-	var point = vec2(wx, wy);
-}
-
 function render() {
     gl.clear( gl.COLOR_BUFFER_BIT );
+	gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
 
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+	// send the data as an array to GL
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW);
+
+    				// Associate out shader variables with our data buffer
+	
+	// get a location to the vertex position's shader variable ('vPosition')
+    var vPosition = gl.getAttribLocation( program, "vPosition");
+	
+	// specifies the vertex attribute information (in an array), used
+	// for rendering 
+    gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0);
+
+	// enable this attribute, with the given attribute name
+    gl.enableVertexAttribArray(vPosition);
+    gl.drawArrays(gl.POINTS, 0, points.length);
 	
 
     setTimeout(
