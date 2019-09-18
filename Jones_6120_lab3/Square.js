@@ -75,13 +75,13 @@ window.onload = function init() {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(index), gl.STATIC_DRAW);
 	
 	//create color buffer the same way as the vertex buffer above
-    var cBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
+    //var cBuffer = gl.createBuffer();
+	//gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+    //gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
 	
-	var vColor = gl.getAttribLocation( program, "vColor");
-    gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 0, 0);
-	gl.enableVertexAttribArray(vColor);
+	//var vColor = gl.getAttribLocation( program, "vColor");
+    //gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 0, 0);
+	//gl.enableVertexAttribArray(vColor);
     
     // Initialize event handlers
 	
