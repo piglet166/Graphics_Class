@@ -198,6 +198,8 @@ function mousePick(){
 			
 			var pntString = "";
 			
+			var txt = document.getElementById('txtArea');
+			
 			for(var i = 0; i < points.length; i++){
 				var pntX = points[i][0];
 				var pntY = points[i][1];
@@ -207,7 +209,7 @@ function mousePick(){
 				if(distance < 15){
 					pntString = (i + 1) + " ";
 					console.log(pntString);
-					var txt = document.getElementById('txtArea');
+					
 					txt.value = "Picked Point: " + pntString;
 					
 				}
