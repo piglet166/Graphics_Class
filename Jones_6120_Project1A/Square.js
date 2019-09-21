@@ -12,6 +12,9 @@ var u_wc;
 var points = [];
 var vBuffer;
 var program;
+var pointSw = false;
+var pickSw = false;
+var clearSw = false;
 
 window.onload = function init() {
 
@@ -145,10 +148,6 @@ function worldToNDC(e, wx, wy){
 	var y = e.clientY;
 	var ndc_x = -1.0 + 2.0 * (wx - (WX_min))/(WX_max - WX_min);
 	var ndc_y = -1.0 + 2.0 * (wy - (WY_min))/(WY_max - WY_min);
-	
-	txt.value = 'Device Coords: ' + x + ' , ' + y + '\n' +
-	'World Coords: ' + wx + " " + wy +'\n' +
-	'NDC Coords: ' + ndc_x + ' , ' + ndc_y;
 };
 
 //"drawUIButtons('1')">Points
@@ -157,62 +156,73 @@ function worldToNDC(e, wx, wy){
 function drawUIButtons(switchInt){
 	switch(switchInt){
 		case '0':
-			mousePick(true);
-			setPoints(false);
-			clearModel(false);
+			pointSw = false;
+			pickSw = true;
+			clearSw = false;
+			mousePick();
+			setPoints();
+			clearModel();
 			break;
 		case '1':
-			mousePick(false);
-			setPoints(true);
-			clearModel(false);
+			pointSw = true;
+			pickSw = false;
+			clearSw = false;
+			mousePick();
+			setPoints();
+			clearModel();
 			break;
 		case '2':
-			mousePick(false);
-			setPoints(false);
-			clearModel(true);
+			pointSw = false;
+			pickSw = false;
+			clearSw = true;
+			mousePick();
+			setPoints();
+			clearModel();
 			break;
 		default:
 			console.log('Something is wrong with the Switch');
 	}
 }
 
-function mousePick(switchFlag){
-	while(switchFlag){
-		console.log("pick switched on");
-		var x = event.clientX;
-		var y = event.clientY;
-		var wx;
-		var wy;
-	
-		wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
-		wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
+function mousePick(){
+	if(pickSw){
+		window.onclick = function(event){
+			console.log("pick switched on");
+			var x = event.clientX;
+			var y = event.clientY;
+			var wx;
+			var wy;
 		
-		var pntString = "";
-		
-		for(var i = 0; i < points.length; i++){
-			var pntX = points[i][0];
-			var pntY = points[i][1];
+			wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
+			wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
 			
-			var distance = Math.sqrt(Math.pow((wx - pntX), 2) + Math.pow((wy - y), 2));
+			var pntString = "";
 			
-			if(distance < 2){
-				pntString = (i + 1) + " ";
-				console.log(pntString);
+			for(var i = 0; i < points.length; i++){
+				var pntX = points[i][0];
+				var pntY = points[i][1];
+				
+				var distance = Math.sqrt(Math.pow((wx - pntX), 2) + Math.pow((wy - pntY), 2));
+				
+				if(distance < 15){
+					pntString = (i + 1) + " ";
+					console.log(pntString);
+					var txt = document.getElementById('txtArea');
+					txt.value = "Picked Point: " + pntString;
+					
+				}
 			}
 		}
 
-		switchFlag = false;
-	}/*else{
+	}else{
 		console.log("pick switched off");
-	}*/
+	}
 }
 
-function setPoints(switchFlag){
-	while(switchFlag){
-		//window.onclick = createPoints(event);
-		window.addEventListener("mousedown", function(event){
-				
-				console.log(switchFlag);
+function setPoints(){
+	if(pointSw){
+		window.onclick = function(event){
+				console.log("Point switched on.");
 				var x = event.clientX;
 				var y = event.clientY;
 				var wx;
@@ -222,44 +232,33 @@ function setPoints(switchFlag){
 				wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
 				console.log(wx, wy);
 	
-				var point = vec2(wx, wy);
-				points.push(point);
+				if(wx < WX_max && wx > WX_min){
+					if(wy < WY_max && wy > WY_min){
+						var point = vec2(wx, wy);
+						points.push(point);
+					}
+				}
 				gl.uniform4fv(u_wc, [WX_min, WY_min, WX_max, WY_max]);
 	
 				render();
-		});
+		};
 		
-		window.addEventListener("mouseup", function(e){});
+		//window.addEventListener("mouseup", function(e){});
 		switchFlag = false;
 		
-	}/*else{
+	}else{
 		console.log("points switched off");
-	}*/
+	}
 }
 
-function clearModel(switchFlag){
-	while(switchFlag){
+function clearModel(){
+	if(clearSw){
 		console.log("cm switched on");
 		while(points.length > 0){ points.pop();}
 		switchFlag = false;
-	}/*else{
+	}else{
 		console.log("cm switched off");
-	}*/
-}
-
-function createPoints(event){
-	var x = event.clientX;
-	var y = event.clientY;
-	var wx;
-	var wy;
-	
-	wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
-	wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
-	console.log(wx, wy);
-	var point = vec2(wx, wy);
-	points.push(point);
-	gl.uniform4fv(u_wc, [WX_min, WY_min, WX_max, WY_max]);
-	render();
+	}
 }
 
 function render() {
