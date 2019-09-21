@@ -79,28 +79,6 @@ window.onload = function init() {
 	
 	//added submit button's functionality to the init method
 	getWorldCintervals();
-    
-    
-    var flag;
-	var acceptFlag = true;
-	
-	window.addEventListener("mousedown", function setInitCoords(e){
-		flag = true;
-		
-		displayToWorld(e);
-		
-		
-	});
-	window.addEventListener("mouseup", function setFlagFalse(){
-		flag = false;
-	});
-	
-	window.addEventListener("mousemove", function displayMouseLoc(e){
-		if(flag == true){
-			
-			displayToWorld(e);
-		}
-	});
 	
 	//commented out the render function so it wouldn't interfere with the user input 
 	//render();
@@ -112,43 +90,7 @@ function getWorldCintervals(){
 	WY_min = parseFloat(document.getElementById( "Ymin" ).value);
 	WX_max = parseFloat(document.getElementById( "Xmax" ).value);
 	WY_max = parseFloat(document.getElementById( "Ymax" ).value);
-	
-	setPointArr(WX_min, WY_min, WX_max, WY_max);
 }
-
-function setPointArr(WX_min, WY_min, WX_max, WY_max){
-	var points;
-}
-
-//calculates the user inputed canvas min and max coords
-function displayToWorld(e){
-	var canvas = document.getElementById( "gl-canvas" );
-	
-	// slide 17 calculations create two new world variables
-	// pass into parameters
-	var x = e.clientX;
-	var y = e.clientY;
-	var wx;
-	var wy;
-	
-	wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
-	wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
-	
-	worldToNDC(e, wx, wy);
-	
-	var acceptFlag = false;
-};
-
-//calculates and ultimately displays the coords in the textarea
-function worldToNDC(e, wx, wy){
-	
-	var canvas = document.getElementById( "gl-canvas" );
-	var txt = document.getElementById('txtArea');
-	var x = e.clientX;
-	var y = e.clientY;
-	var ndc_x = -1.0 + 2.0 * (wx - (WX_min))/(WX_max - WX_min);
-	var ndc_y = -1.0 + 2.0 * (wy - (WY_min))/(WY_max - WY_min);
-};
 
 //"drawUIButtons('1')">Points
 //"drawUIButtons('2')">Clear Model
