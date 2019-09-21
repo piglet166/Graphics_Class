@@ -33,18 +33,12 @@ window.onload = function init() {
 
     var vertices = [
         
-		vec2(  0,  1 ),
-        vec2(  1,  0 ),
-        vec2( -1,  0 ),
-        vec2(  0, -1 )
 		
     ];
 	
 	var index = [
 		
-		0, 1, 3, 2,
-		0, 1, 2, 3, 
-		1, 2
+		
 	];
 	
 	//added enough colors for all the different verticies
@@ -74,14 +68,7 @@ window.onload = function init() {
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(index), gl.STATIC_DRAW);
 	
-	//create color buffer the same way as the vertex buffer above
-    //var cBuffer = gl.createBuffer();
-	//gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
-    //gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
 	
-	//var vColor = gl.getAttribLocation( program, "vColor");
-    //gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 0, 0);
-	//gl.enableVertexAttribArray(vColor);
     
     // Initialize event handlers
 	
@@ -90,37 +77,7 @@ window.onload = function init() {
 	//added submit button's functionality to the init method
 	getWorldCintervals();
     
-    window.onkeydown = function(event) {
-        var key = String.fromCharCode(event.keyCode);
-        switch(key) {
-          case '1':
-				// do something
-				gl.clear( gl.COLOR_BUFFER_BIT );
-				gl.drawElements(gl.TRIANGLE_STRIP, 8, gl.UNSIGNED_SHORT, 0);
-            break;
-
-          case '2':
-				// do something else
-				gl.clear( gl.COLOR_BUFFER_BIT );
-				gl.drawElements(gl.TRIANGLES, 10, gl.UNSIGNED_SHORT, 0);
-				//gl.drawArrays(gl.TRIANGLES, 0, 6);
-            break;
-
-          case '3':
-            	// do a third thing
-				gl.clear( gl.COLOR_BUFFER_BIT );
-				gl.drawElements(gl.LINE_LOOP, 4, gl.UNSIGNED_SHORT, 0);
-				//gl.drawArrays(gl.LINE_LOOP, 7, 4);
-			break;
-			
-		case '4':
-				// do a fourth thing
-				gl.clear( gl.COLOR_BUFFER_BIT );
-				gl.drawElements(gl.TRIANGLE_FAN, 6, gl.UNSIGNED_SHORT, 0);
-				//gl.drawArrays(gl.TRIANGLE_FAN, 0, 5);
-			break;
-        }
-    };
+    
     var flag;
 	var acceptFlag = true;
 	
@@ -189,60 +146,120 @@ function worldToNDC(e, wx, wy){
 	var ndc_x = -1.0 + 2.0 * (wx - (WX_min))/(WX_max - WX_min);
 	var ndc_y = -1.0 + 2.0 * (wy - (WY_min))/(WY_max - WY_min);
 	
-	//X to WX is page 17, WX to NDC is 
-	//-1 + 2 * wx - Range / () to find NDC X
-	//-1 + 2 * wy - range / () to find NDC y (don't need to flip signs
-	
 	txt.value = 'Device Coords: ' + x + ' , ' + y + '\n' +
 	'World Coords: ' + wx + " " + wy +'\n' +
 	'NDC Coords: ' + ndc_x + ' , ' + ndc_y;
 };
 
+//"drawUIButtons('1')">Points
+//"drawUIButtons('2')">Clear Model
+//"drawUIButtons('0')">Pick
 function drawUIButtons(switchInt){
 	switch(switchInt){
 		case '0':
-			mouseDrag(true);
+			mousePick(true);
 			setPoints(false);
+			clearModel(false);
 			break;
 		case '1':
-			mouseDrag(false);
+			mousePick(false);
 			setPoints(true);
+			clearModel(false);
+			break;
+		case '2':
+			mousePick(false);
+			setPoints(false);
+			clearModel(true);
 			break;
 		default:
 			console.log('Something is wrong with the Switch');
 	}
 }
 
-function mouseDrag(switchFlag){
-	if(switchFlag){
-		console.log("mg switched on");
-	}else{
-		console.log("mg switched off");
-	}
+function mousePick(switchFlag){
+	while(switchFlag){
+		console.log("pick switched on");
+		var x = event.clientX;
+		var y = event.clientY;
+		var wx;
+		var wy;
+	
+		wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
+		wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
+		
+		var pntString = "";
+		
+		for(var i = 0; i < points.length; i++){
+			var pntX = points[i][0];
+			var pntY = points[i][1];
+			
+			var distance = Math.sqrt(Math.pow((wx - pntX), 2) + Math.pow((wy - y), 2));
+			
+			if(distance < 2){
+				pntString = (i + 1) + " ";
+				console.log(pntString);
+			}
+		}
+
+		switchFlag = false;
+	}/*else{
+		console.log("pick switched off");
+	}*/
 }
 
 function setPoints(switchFlag){
-	if(switchFlag){
-		console.log("dp switched on");
-		window.onclick = function(event){
-			var x = event.clientX;
-			var y = event.clientY;
-			var wx;
-			var wy;
+	while(switchFlag){
+		//window.onclick = createPoints(event);
+		window.addEventListener("mousedown", function(event){
+				
+				console.log(switchFlag);
+				var x = event.clientX;
+				var y = event.clientY;
+				var wx;
+				var wy;
 	
-			wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
-			wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
-			console.log(wx, wy);
+				wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
+				wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
+				console.log(wx, wy);
 	
-			var point = vec2(wx, wy);
-			points.push(point);
-			gl.uniform4fv(u_wc, [WX_min, WY_min, WX_max, WY_max]);
+				var point = vec2(wx, wy);
+				points.push(point);
+				gl.uniform4fv(u_wc, [WX_min, WY_min, WX_max, WY_max]);
 	
-			render();
-		};
-	}else{
-		console.log("dp switched off");
-	}
+				render();
+		});
+		
+		window.addEventListener("mouseup", function(e){});
+		switchFlag = false;
+		
+	}/*else{
+		console.log("points switched off");
+	}*/
+}
+
+function clearModel(switchFlag){
+	while(switchFlag){
+		console.log("cm switched on");
+		while(points.length > 0){ points.pop();}
+		switchFlag = false;
+	}/*else{
+		console.log("cm switched off");
+	}*/
+}
+
+function createPoints(event){
+	var x = event.clientX;
+	var y = event.clientY;
+	var wx;
+	var wy;
+	
+	wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
+	wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
+	console.log(wx, wy);
+	var point = vec2(wx, wy);
+	points.push(point);
+	gl.uniform4fv(u_wc, [WX_min, WY_min, WX_max, WY_max]);
+	render();
 }
 
 function render() {
