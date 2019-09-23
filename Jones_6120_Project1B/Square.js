@@ -207,6 +207,7 @@ function mousePick(){
 					
 				}
 			}
+			render();
 		}
 
 	}else{
@@ -317,7 +318,7 @@ function clearModel(){
 	if(clearSw){
 		console.log("cm switched on");
 		while(points.length > 0){ points.pop();}
-		switchFlag = false;
+		render();
 	}else{
 		console.log("cm switched off");
 	}
@@ -344,7 +345,8 @@ function render() {
     gl.drawArrays(gl.POINTS, 0, points.length);
 	
 
-    setTimeout(
+    /*setTimeout(
         function (){requestAnimFrame(render);}, delay
     );
+	*/
 }
