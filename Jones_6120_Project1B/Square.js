@@ -11,9 +11,17 @@ var WY_max;
 var u_wc;
 
 var points = [];
+var pColors = [];
+var lines = [];
+var lColors = [];
+var triangles = [];
+var tColors = [];
+
 var vBuffer;
 var program;
 var pointSw = false;
+var lineSw = false;
+var triSw = false;
 var pickSw = false;
 var clearSw = false;
 
@@ -93,34 +101,75 @@ function getWorldCintervals(){
 	WY_max = parseFloat(document.getElementById( "Ymax" ).value);
 }
 
-//"drawUIButtons('1')">Points
-//"drawUIButtons('2')">Clear Model
-//"drawUIButtons('0')">Pick
+/*
+<button onclick = "getWorldCintervals()">Submit</button>
+<button onclick = "drawUIButtons('1')">Points</button>
+<button onclick = "drawUIButtons('3')">Lines</button>
+<button onclick = "drawUIButtons('4')">Triangles</button>
+<button onclick = "drawUIButtons('2')">Clear Model</button>
+<button onclick = "drawUIButtons('0')">Pick</button>
+*/
 function drawUIButtons(switchInt){
 	switch(switchInt){
 		case '0':
 			pointSw = false;
+			lineSw = false;
+			triSw = false;
 			pickSw = true;
 			clearSw = false;
 			mousePick();
 			setPoints();
 			clearModel();
+			setLines();
+			setTriangles();
 			break;
 		case '1':
 			pointSw = true;
+			lineSw = false;
+			triSw = false;
 			pickSw = false;
 			clearSw = false;
 			mousePick();
 			setPoints();
 			clearModel();
+			setLines();
+			setTriangles();
 			break;
 		case '2':
 			pointSw = false;
+			lineSw = false;
+			triSw = false;
 			pickSw = false;
 			clearSw = true;
 			mousePick();
 			setPoints();
 			clearModel();
+			setLines();
+			setTriangles();
+			break;
+		case '3':
+			pointSw = false;
+			lineSw = true;
+			triSw = false;
+			pickSw = false;
+			clearSw = false;
+			mousePick();
+			setPoints();
+			clearModel();
+			setLines();
+			setTriangles();
+			break;
+		case '4':
+			pointSw = false;
+			lineSw = false;
+			triSw = true;
+			pickSw = false;
+			clearSw = false;
+			mousePick();
+			setPoints();
+			clearModel();
+			setLines();
+			setTriangles();
 			break;
 		default:
 			console.log('Something is wrong with the Switch');
@@ -166,6 +215,72 @@ function mousePick(){
 }
 
 function setPoints(){
+	if(pointSw){
+		var canvas = document.getElementById( "gl-canvas" );
+		canvas.onclick = function(event){
+				console.log("Point switched on.");
+				var x = event.clientX - 8;
+				var y = event.clientY - 8;
+				var wx;
+				var wy;
+	
+				wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
+				wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
+				console.log(wx, wy);
+	
+				if(wx < WX_max && wx > WX_min){
+					if(wy < WY_max && wy > WY_min){
+						var point = vec2(wx, wy);
+						points.push(point);
+					}
+				}
+				gl.uniform4fv(u_wc, [WX_min, WY_min, WX_max, WY_max]);
+	
+				render();
+		};
+		
+		//window.addEventListener("mouseup", function(e){});
+		switchFlag = false;
+		
+	}else{
+		console.log("points switched off");
+	}
+}
+
+function setLines(){
+	if(pointSw){
+		var canvas = document.getElementById( "gl-canvas" );
+		canvas.onclick = function(event){
+				console.log("Point switched on.");
+				var x = event.clientX - 8;
+				var y = event.clientY - 8;
+				var wx;
+				var wy;
+	
+				wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
+				wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
+				console.log(wx, wy);
+	
+				if(wx < WX_max && wx > WX_min){
+					if(wy < WY_max && wy > WY_min){
+						var point = vec2(wx, wy);
+						points.push(point);
+					}
+				}
+				gl.uniform4fv(u_wc, [WX_min, WY_min, WX_max, WY_max]);
+	
+				render();
+		};
+		
+		//window.addEventListener("mouseup", function(e){});
+		switchFlag = false;
+		
+	}else{
+		console.log("points switched off");
+	}
+}
+
+function setTriangles(){
 	if(pointSw){
 		var canvas = document.getElementById( "gl-canvas" );
 		canvas.onclick = function(event){
