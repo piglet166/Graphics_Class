@@ -3,6 +3,7 @@ var gl;
 
 var delay = 100;
 
+
 var WX_min;
 var WY_min;
 var WX_max;
@@ -17,8 +18,8 @@ var pickSw = false;
 var clearSw = false;
 
 window.onload = function init() {
-
-    var canvas = document.getElementById( "gl-canvas" );
+	
+	var canvas = document.getElementById( "gl-canvas" );
 	
     gl = WebGLUtils.setupWebGL( canvas );
     if ( !gl ) { alert( "WebGL isn't available" ); }
@@ -128,10 +129,11 @@ function drawUIButtons(switchInt){
 
 function mousePick(){
 	if(pickSw){
-		window.onclick = function(event){
+		var canvas = document.getElementById( "gl-canvas" );
+		canvas.onclick = function(event){
 			console.log("pick switched on");
-			var x = event.clientX;
-			var y = event.clientY;
+			var x = event.clientX - 8;
+			var y = event.clientY - 8;
 			var wx;
 			var wy;
 		
@@ -165,10 +167,11 @@ function mousePick(){
 
 function setPoints(){
 	if(pointSw){
-		window.onclick = function(event){
+		var canvas = document.getElementById( "gl-canvas" );
+		canvas.onclick = function(event){
 				console.log("Point switched on.");
-				var x = event.clientX;
-				var y = event.clientY;
+				var x = event.clientX - 8;
+				var y = event.clientY - 8;
 				var wx;
 				var wy;
 	
