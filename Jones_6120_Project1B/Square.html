@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<title>Rotating Square</title>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+
+// vertex position
+attribute vec2 vPosition;
+
+// Need this when you have vertex colors
+attribute vec4 vColor; 
+
+// need this to pass color to fragment shader
+varying vec4 fColor;
+//
+
+uniform vec4 uniHolder;
+
+void main()
+{
+// if you are using vertex colors you need to assign it to fColor
+	fColor = vColor;
+	
+	float ndc_x = -1.0 + 2.0 * (vPosition.x - (uniHolder.x))/(uniHolder.z - uniHolder.y);
+	float ndc_y = -1.0 + 2.0 * (vPosition.y - (uniHolder.y))/(uniHolder.w - uniHolder.y);
+
+	gl_Position = vec4(ndc_x, -ndc_y, 0.0, 1.0);
+	gl_PointSize = 10.0;
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+
+precision mediump float;
+
+// need it if you are receiving vertex colors
+ varying vec4 fColor;
+
+void main()
+{
+    gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+
+// use this if you are getting colors from vertex shader 
+	//gl_FragColor = fColor;
+}
+</script>
+
+<script type="text/javascript" src="./Common/webgl-utils.js"></script>
+<script type="text/javascript" src="./Common/initShaders.js"></script>
+<script type="text/javascript" src="./Common/MV.js"></script>
+<script type="text/javascript" src="Square.js"></script>
+</head>   
+
+<body>
+<canvas id="gl-canvas" width="512" height="512">
+Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>
+<textarea id = "txtArea" rows = 4 cols = 50 >
+To display point, create points with "Point"
+and select a point with "Pick"
+</textarea>
+<form id= "frm" method="GET" action="">
+World Coord[X Min] <input id= "Xmin" type="text" name="WXMin" value="0">
+World Coord[X Max] <input id= "Xmax" type="text" name="WXMax" value="512"><br>
+World Coord[Y Min] <input id= "Ymin" type="text" name="WYMin" value="0">
+World Coord[Y Max] <input id= "Ymax" type="text" name="WYMax" value="512"><br>
+</form>
+<button onclick = "getWorldCintervals()">Submit</button>
+<button onclick = "drawUIButtons('1')">Points</button>
+<button onclick = "drawUIButtons('2')">Clear Model</button>
+<button onclick = "drawUIButtons('0')">Pick</button>
+</body>
+</html>
