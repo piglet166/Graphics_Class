@@ -324,6 +324,8 @@ function render() {
 
 	// send the data as an array to GL
     gl.bufferData(gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW);
+	gl.bufferData(gl.ARRAY_BUFFER, flatten(lines), gl.STATIC_DRAW);
+	gl.bufferData(gl.ARRAY_BUFFER, flatten(triangles), gl.STATIC_DRAW);
 
     				// Associate out shader variables with our data buffer
 	
@@ -337,6 +339,16 @@ function render() {
 	// enable this attribute, with the given attribute name
     gl.enableVertexAttribArray(vPosition);
     gl.drawArrays(gl.POINTS, 0, points.length);
+	gl.drawArrays(gl.LINES, 0, lines.length);
+	gl.drawArrays(gl.TRIANGLES, 0, triangles.length);
+	
+	var cBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
+	
+	var vColor = gl.getAttribLocation( program, "vColor");
+    gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 0, 0);
+	gl.enableVertexAttribArray(vColor);
 	
 //ask about timeout function!!!
     /*setTimeout(
