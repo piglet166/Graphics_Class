@@ -18,6 +18,13 @@ var triangles = [];
 var tColors = [];
 
 var vBuffer;
+var pBuffer;
+var lBuffer;
+var tBuffer;
+var cpBuffer;
+var clBuffer;
+var ctBuffer;
+
 var program;
 var pointSw = false;
 var lineSw = false;
@@ -49,24 +56,17 @@ window.onload = function init() {
 	];
 	
 	//added enough colors for all the different verticies
-	pColors = [
-		vec4(1.0, 0.0, 0.0, 1.0),
-	];
 	
-	lColors = [
-		vec4(0.0, 1.0, 0.0, 1.0),
-	];
-	
-	tColors = [
-		vec4(0.0, 0.0, 1.0, 1.0),
-		vec4(1.0, 0.0, 1.0, 1.0),
-		vec4(1.0, 1.0, 0.0, 1.0),
-	];
 	
 	u_wc = gl.getUniformLocation(program, "uniHolder");
 
     // Create a buffer to hold the  vertices
-    vBuffer = gl.createBuffer();
+    pBuffer = gl.createBuffer();
+	lBuffer = gl.createBuffer();
+	tBuffer = gl.createBuffer();
+	cpBuffer = gl.createBuffer();
+	clBuffer = gl.createBuffer();
+	ctBuffer = gl.createBuffer();
 
 	// bind it to make it active
     
@@ -166,6 +166,7 @@ function drawUIButtons(switchInt){
 			setLines();
 			setTriangles();
 			break;
+		
 		default:
 			console.log('Something is wrong with the Switch');
 	}
@@ -222,17 +223,21 @@ function setPoints(){
 	
 				wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
 				wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
-				console.log(wx, wy);
+				//console.log(wx, wy);
 	
 				if(wx < WX_max && wx > WX_min){
 					if(wy < WY_max && wy > WY_min){
 						var point = vec2(wx, wy);
 						points.push(point);
+						pColors.push(vec4(1.0, 0.0, 0.0, 1.0));
+						console.log("Here");
 					}
 				}
+				console.log(points);
 				gl.uniform4fv(u_wc, [WX_min, WY_min, WX_max, WY_max]);
 	
 				render();
+				
 		};
 		
 	}else{
@@ -244,7 +249,7 @@ function setLines(){
 	
 	var uiCount = 0;
 	
-	if(pointSw){
+	if(lineSw){
 		var canvas = document.getElementById( "gl-canvas" );
 		canvas.onclick = function(event){
 				console.log("Point switched on.");
@@ -255,21 +260,23 @@ function setLines(){
 	
 				wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
 				wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
-				console.log(wx, wy);
+				//console.log(wx, wy);
 	
 				if(wx < WX_max && wx > WX_min){
 					if(wy < WY_max && wy > WY_min){
 						var line = vec2(wx, wy);
 						lines.push(line);
+						lColors.push(vec4(0.0, 1.0, 0.0, 1.0));
 					}
 				}
 				gl.uniform4fv(u_wc, [WX_min, WY_min, WX_max, WY_max]);
 	
 				render();
+				
 		};
 		
 	}else{
-		console.log("points switched off");
+		console.log("liness switched off");
 	}
 }
 
@@ -277,7 +284,7 @@ function setTriangles(){
 	
 	var uiCount = 0;
 	
-	if(pointSw){
+	if(triSw){
 		var canvas = document.getElementById( "gl-canvas" );
 		canvas.onclick = function(event){
 				console.log("Point switched on.");
@@ -288,21 +295,23 @@ function setTriangles(){
 	
 				wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
 				wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
-				console.log(wx, wy);
+				//console.log(wx, wy);
 	
 				if(wx < WX_max && wx > WX_min){
 					if(wy < WY_max && wy > WY_min){
 						var triangle = vec2(wx, wy);
 						triangles.push(triangle);
+						tColors.push(vec4(1.0, 0.0, 1.0, 1.0));
 					}
 				}
 				gl.uniform4fv(u_wc, [WX_min, WY_min, WX_max, WY_max]);
 	
 				render();
+				
 		};
 		
 	}else{
-		console.log("points switched off");
+		console.log("tri switched off");
 	}
 }
 
@@ -320,35 +329,69 @@ function clearModel(){
 
 function render() {
     gl.clear( gl.COLOR_BUFFER_BIT );
-	gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, pBuffer);
 
-	// send the data as an array to GL
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW);
-	gl.bufferData(gl.ARRAY_BUFFER, flatten(lines), gl.STATIC_DRAW);
-	gl.bufferData(gl.ARRAY_BUFFER, flatten(triangles), gl.STATIC_DRAW);
+				// send the data as an array to GL
+				gl.bufferData(gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW);
+				
 
-    				// Associate out shader variables with our data buffer
-	
-	// get a location to the vertex position's shader variable ('vPosition')
-    var vPosition = gl.getAttribLocation( program, "vPosition");
-	
-	// specifies the vertex attribute information (in an array), used
-	// for rendering 
-    gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0);
+								// Associate out shader variables with our data buffer
+				
+				// get a location to the vertex position's shader variable ('vPosition')
+				var pPosition = gl.getAttribLocation( program, "vPosition");
+				
+				// specifies the vertex attribute information (in an array), used
+				// for rendering 
+				gl.vertexAttribPointer(pPosition, 2, gl.FLOAT, false, 0, 0);
 
-	// enable this attribute, with the given attribute name
-    gl.enableVertexAttribArray(vPosition);
-    gl.drawArrays(gl.POINTS, 0, points.length);
-	gl.drawArrays(gl.LINES, 0, lines.length);
-	gl.drawArrays(gl.TRIANGLES, 0, triangles.length);
+				// enable this attribute, with the given attribute name
+				gl.enableVertexAttribArray(pPosition);
+				//color buffer
+				gl.bindBuffer(gl.ARRAY_BUFFER, cpBuffer);
+				gl.bufferData(gl.ARRAY_BUFFER, flatten(pColors), gl.STATIC_DRAW);
+				
+				var vpColor = gl.getAttribLocation( program, "vColor");
+				gl.vertexAttribPointer(vpColor, 4, gl.FLOAT, false, 0, 0);
+				gl.enableVertexAttribArray(vpColor);
+				
+				gl.drawArrays(gl.POINTS, 0, points.length);
 	
-	var cBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
+	//lines
 	
-	var vColor = gl.getAttribLocation( program, "vColor");
-    gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 0, 0);
-	gl.enableVertexAttribArray(vColor);
+	gl.bindBuffer(gl.ARRAY_BUFFER, lBuffer);
+				gl.bufferData(gl.ARRAY_BUFFER, flatten(lines), gl.STATIC_DRAW);
+				var lPosition = gl.getAttribLocation(program, "vPosition");
+				gl.vertexAttribPointer(lPosition, 2, gl.FLOAT, false, 0, 0);
+				
+				gl.enableVertexAttribArray(lPosition);
+				
+				gl.bindBuffer(gl.ARRAY_BUFFER, clBuffer);
+				gl.bufferData(gl.ARRAY_BUFFER, flatten(lColors), gl.STATIC_DRAW);
+				
+				var vlColor = gl.getAttribLocation( program, "vColor");
+				gl.vertexAttribPointer(vlColor, 4, gl.FLOAT, false, 0, 0);
+				gl.enableVertexAttribArray(vlColor);
+				
+				gl.drawArrays(gl.LINES, 0, lines.length);
+	
+	//triangles
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, tBuffer);
+				gl.bufferData(gl.ARRAY_BUFFER, flatten(triangles), gl.STATIC_DRAW);
+				var tPosition = gl.getAttribLocation(program, "vPosition");
+				gl.vertexAttribPointer(tPosition, 2, gl.FLOAT, false, 0, 0);
+				gl.enableVertexAttribArray(tPosition);
+				
+				gl.bindBuffer(gl.ARRAY_BUFFER, ctBuffer);
+				gl.bufferData(gl.ARRAY_BUFFER, flatten(tColors), gl.STATIC_DRAW);
+				
+				var vtColor = gl.getAttribLocation( program, "vColor");
+				gl.vertexAttribPointer(vtColor, 4, gl.FLOAT, false, 0, 0);
+				gl.enableVertexAttribArray(vtColor);
+				
+				gl.drawArrays(gl.TRIANGLES, 0, triangles.length);
+	
 	
 //ask about timeout function!!!
     /*setTimeout(
