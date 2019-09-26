@@ -42,11 +42,6 @@ window.onload = function init() {
     
     program = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program );
-
-    var vertices = [
-        
-		
-    ];
 	
 	var index = [
 		
@@ -54,18 +49,18 @@ window.onload = function init() {
 	];
 	
 	//added enough colors for all the different verticies
-	var colors = [
+	pColors = [
 		vec4(1.0, 0.0, 0.0, 1.0),
+	];
+	
+	lColors = [
 		vec4(0.0, 1.0, 0.0, 1.0),
+	];
+	
+	tColors = [
 		vec4(0.0, 0.0, 1.0, 1.0),
 		vec4(1.0, 0.0, 1.0, 1.0),
 		vec4(1.0, 1.0, 0.0, 1.0),
-		vec4(0.0, 1.0, 1.0, 1.0),
-		vec4(1.0, 1.0, 1.0, 1.0),
-		vec4(1.0, 0.0, 0.0, 1.0),
-		vec4(0.0, 1.0, 0.0, 1.0),
-		vec4(0.0, 0.0, 1.0, 1.0),
-		vec4(1.0, 0.0, 1.0, 1.0)
 	];
 	
 	u_wc = gl.getUniformLocation(program, "uniHolder");
@@ -240,15 +235,15 @@ function setPoints(){
 				render();
 		};
 		
-		//window.addEventListener("mouseup", function(e){});
-		switchFlag = false;
-		
 	}else{
 		console.log("points switched off");
 	}
 }
 
 function setLines(){
+	
+	var uiCount = 0;
+	
 	if(pointSw){
 		var canvas = document.getElementById( "gl-canvas" );
 		canvas.onclick = function(event){
@@ -264,17 +259,14 @@ function setLines(){
 	
 				if(wx < WX_max && wx > WX_min){
 					if(wy < WY_max && wy > WY_min){
-						var point = vec2(wx, wy);
-						points.push(point);
+						var line = vec2(wx, wy);
+						lines.push(line);
 					}
 				}
 				gl.uniform4fv(u_wc, [WX_min, WY_min, WX_max, WY_max]);
 	
 				render();
 		};
-		
-		//window.addEventListener("mouseup", function(e){});
-		switchFlag = false;
 		
 	}else{
 		console.log("points switched off");
@@ -282,6 +274,9 @@ function setLines(){
 }
 
 function setTriangles(){
+	
+	var uiCount = 0;
+	
 	if(pointSw){
 		var canvas = document.getElementById( "gl-canvas" );
 		canvas.onclick = function(event){
@@ -297,17 +292,14 @@ function setTriangles(){
 	
 				if(wx < WX_max && wx > WX_min){
 					if(wy < WY_max && wy > WY_min){
-						var point = vec2(wx, wy);
-						points.push(point);
+						var triangle = vec2(wx, wy);
+						triangles.push(triangle);
 					}
 				}
 				gl.uniform4fv(u_wc, [WX_min, WY_min, WX_max, WY_max]);
 	
 				render();
 		};
-		
-		//window.addEventListener("mouseup", function(e){});
-		switchFlag = false;
 		
 	}else{
 		console.log("points switched off");
@@ -318,6 +310,8 @@ function clearModel(){
 	if(clearSw){
 		console.log("cm switched on");
 		while(points.length > 0){ points.pop();}
+		while(lines.length > 0){ lines.pop();}
+		while(triangles.length > 0){ triangles.pop();}
 		render();
 	}else{
 		console.log("cm switched off");
@@ -344,9 +338,9 @@ function render() {
     gl.enableVertexAttribArray(vPosition);
     gl.drawArrays(gl.POINTS, 0, points.length);
 	
-
+//ask about timeout function!!!
     /*setTimeout(
         function (){requestAnimFrame(render);}, delay
-    );
-	*/
+    );*/
+	
 }

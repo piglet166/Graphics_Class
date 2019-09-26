@@ -203,6 +203,7 @@ function clearModel(){
 		console.log("cm switched on");
 		while(points.length > 0){ points.pop();}
 		switchFlag = false;
+		render();
 	}else{
 		console.log("cm switched off");
 	}
@@ -229,7 +230,7 @@ function render() {
     gl.drawArrays(gl.POINTS, 0, points.length);
 	
 
-    setTimeout(
-        function (){requestAnimFrame(render);}, delay
-    );
+    //setTimeout(
+    //    function (){requestAnimFrame(render);}, delay
+    //);
 }
