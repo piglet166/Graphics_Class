@@ -203,6 +203,35 @@ function mousePick(){
 					
 				}
 			}
+			for(var i = 0; i < lines.length; i++){
+				var pntX = lines[i][0];
+				var pntY = lines[i][1];
+				
+				var distance = Math.sqrt(Math.pow((wx - pntX), 2) + Math.pow((wy - pntY), 2));
+				
+				if(distance < 15){
+					pntString = Math.floor((i/2) + 1) + " ";
+					console.log(pntString);
+					
+					txt.value = "Picked Line: " + pntString;
+					
+				}
+			}
+			for(var i = 0; i < triangles.length; i++){
+				var pntX = triangles[i][0];
+				var pntY = triangles[i][1];
+				
+				var distance = Math.sqrt(Math.pow((wx - pntX), 2) + Math.pow((wy - pntY), 2));
+				
+				if(distance < 15){
+					pntString = Math.floor((i/3) + 1) + " ";
+					console.log(pntString);
+					
+					txt.value = "Picked Triangle: " + pntString;
+					
+				}
+			}
+			
 			render();
 		}
 
