@@ -21,7 +21,13 @@ function identity3x3(){
 
 //returns a 3x3 translation matrix with tx and ty as translation factors along X and Y
 function transl3x3(tx, ty){
+	var trans = new Array(9);
 	
+	trans = [ 1,  0, 0, 
+			  0,  1, 0, 
+			 tx, ty, 1 ];
+			 
+	return trans;
 }
 
 //returns a 3x3 rotation matrix that rotates by 'angle' (note that if the angle is passed in degrees, 
