@@ -391,48 +391,104 @@ function translate(){
 	
 	if(transSw){
 		var pickedPoint;
-		
-		p = pickedArr;
+		var transFlag = false;
+		var p = pickedArr;
 		
 		canvas.onmousedown = function(){
+			transFlag = true;
+			console.log("worked");
+		}
+		
+		canvas.onmousemove = function(){
 			
-			pickedPoint = p[1];
-			
-			var x = event.clientX - 8;
-			var y = event.clientY - 8;
-			var wx;
-			var wy;
-	
-			wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
-			wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
-			
-			
-			
-			switch(p[0]){
-				case 1:
-					var tx = wx - points[p[2]][0];
-					var ty = wy - points[p[2]][1];
-					console.log("tx ", tx, "ty ", ty);
-					console.log("wx ", wx, "wy ", wy);
-					console.log("point X ", points[p[2]][0], "point y", points[p[2]][1]);
-					var trans = transl3x3(tx, ty);
-					console.log(trans);
-					console.log(p);
-			
-					console.log(points[p[2]]);
-					var newPoint = matVecMult(trans, [points[p[2]][0], 
-										points[p[2]][1], 1]);
-					console.log(newPoint);
-					points[p[2]] = [newPoint[0], newPoint[1]];
-					render();
-					break;
-				case 2:
-					break;
-				case 3:
-					break;
-				default:
-					break;
+			if(transFlag){
+				pickedPoint = p[1];
+				
+				var x = event.clientX - 8;
+				var y = event.clientY - 8;
+				var wx;
+				var wy;
+		
+				wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
+				wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
+				
+				
+				
+				switch(p[0]){
+					case 1:
+						var tx = wx - points[p[2]][0];
+						var ty = wy - points[p[2]][1];
+						var trans = transl3x3(tx, ty);
+						
+				
+						var newPoint = matVecMult(trans, [points[p[2]][0], 
+											points[p[2]][1], 1]);
+						points[p[2]] = [newPoint[0], newPoint[1]];
+						render();
+						break;
+					case 2:
+						var rmdr = p[2] % 2;
+						
+						if(rmdr == 0){
+							console.log(lines[p[2]]);
+							var tx = wx - lines[p[2]][0];
+							var ty = wy - lines[p[2]][1];
+							var trans = transl3x3(tx, ty);
+					
+							var newPoint = matVecMult(trans, [lines[p[2]][0], 
+												lines[p[2]][1], 1]);
+							console.log(newPoint);
+							lines[p[2]] = [newPoint[0], newPoint[1]];
+							
+							var tx2 = wx - lines[p[2] + 1][0];
+							var ty2 = wy - lines[p[2] + 1][1];
+							var trans = transl3x3(tx2, ty2);
+					
+							var newPoint2 = matVecMult(trans, [lines[p[2] + 1][0], 
+												lines[p[2] + 1][1], 1]);
+							lines[p[2] + 1] = [newPoint2[0], newPoint2[1]];
+							
+						}else{
+							console.log(lines[p[2]]);
+							var tx = wx - lines[p[2]][0];
+							var ty = wy - lines[p[2]][1];
+							var trans = transl3x3(tx, ty);
+					
+							var newPoint = matVecMult(trans, [lines[p[2]][0], 
+												lines[p[2]][1], 1]);
+							lines[p[2]] = [newPoint[0], newPoint[1]];
+							
+							var tx2 = wx - lines[p[2] - 1][0];
+							var ty2 = wy - lines[p[2] - 1][1];
+							var trans2 = transl3x3(tx2, ty2);
+					
+							var newPoint2 = matVecMult(trans2, [lines[p[2] - 1][0], 
+												lines[p[2] - 1][1], 1]);
+							lines[p[2] - 1] = [newPoint2[0], newPoint2[1]];
+							
+						}
+						
+						render();
+						break;
+					case 3:
+						var tx = wx - triangles[p[2]][0];
+						var ty = wy - triangles[p[2]][1];
+						var trans = transl3x3(tx, ty);
+						
+						var newPoint = matVecMult(trans, [triangles[p[2]][0], 
+											triangles[p[2]][1], 1]);
+						triangles[p[2]] = [newPoint[0], newPoint[1]];
+						render();
+						break;
+					default:
+						break;
+				}
 			}
+		}
+		
+		canvas.onmouseup = function(){
+			transFlag = false;
+			console.log("worked 2");
 		}
 		
 	}else{
