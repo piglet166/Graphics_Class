@@ -27,9 +27,9 @@ function identity3x3(){
 function transl3x3(tx, ty){
 	var trans = new Array(9);
 	
-	trans = [ 1,  0, 0, 
-			  0,  1, 0, 
-			 tx, ty, 1 ];
+	trans = [ 1,  0, tx, 
+			  0,  1, ty, 
+			  0,  0, 1 ];
 			 
 	return trans;
 }
@@ -38,33 +38,40 @@ function transl3x3(tx, ty){
 //it needs to be converted into radians prior to applying trig functions (use the Javascript Math 
 //package to use the trig functions)
 function rotate3x3(angle){
+	var retRot = [ ];
 	
+	var cosVar = Math.cos(angle * Math.PI/180);
+	var sinVar = Math.sin(angle * Math.PI/180);
+	
+	retRot = [  cosVar, sinVar, 0,
+			   -sinVar, cosVar, 0,
+			         0,      0, 1  ];
+	
+	return retRot;
 }
 
 //returns a 3x3 scale matrix for scaling by sx, sy along the X and Y axes.
 function scale3x3(sx, sy){
-	
+	var retScale = [ sx,  0,  0,
+					  0, sy,  0,
+					  0,  0,  1 ];
+					  
+	return retScale;
 }
 
 //computes and returns the transformed vector V'= M*V,  where M is a 3x3 matrix and V is
 //a 3 element vector
 function matVecMult(M, V){
-	var retV = [ ];
+	var retV = [ 0,0,0];
 	
-	trans = transl3x3(); //I need tx and ty
-	retV[0] = (M[0] * trans[0]) + (M[1] * trans[3]) + (M[2] * trans[6]);
-	retV[1] = (M[0] * trans[1]) + (M[1] * trans[4]) + (M[2] * trans[7]);
-	retV[2] = (M[0] * trans[2]) + (M[1] * trans[5]) + (M[2] * trans[8]);
-	retV[3] = (M[3] * trans[0]) + (M[4] * trans[3]) + (M[5] * trans[6]);
-	retV[4] = (M[3] * trans[1]) + (M[4] * trans[4]) + (M[5] * trans[7]);
-	retV[5] = (M[3] * trans[2]) + (M[4] * trans[5]) + (M[5] * trans[8]);
-	retV[6] = (M[6] * trans[0]) + (M[7] * trans[3]) + (M[8] * trans[6]);
-	retV[7] = (M[6] * trans[1]) + (M[7] * trans[4]) + (M[8] * trans[7]);
-	retV[8] = (M[6] * trans[2]) + (M[7] * trans[5]) + (M[8] * trans[8]);
+	retV[0] = (V[0] * M[0]) + (V[1] * M[1]) + (V[2] * M[2]);
+	retV[1] = (V[0] * M[3]) + (V[1] * M[4]) + (V[2] * M[5]);
+	retV[2] = (V[0] * M[6]) + (V[1] * M[7]) + (V[2] * M[8]);
 	
 	return retV;
 }
 
+//Do backwards
 //computes the product of M1 and M2, which are both 3x3 matrices, resulting in M' = M1*M2
 function matMult(M1, M2){
 	var retM;

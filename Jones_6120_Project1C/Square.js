@@ -1,5 +1,6 @@
 
 var gl;
+var canvas;
 
 var delay = 100;
 
@@ -32,9 +33,12 @@ var triSw = false;
 var pickSw = false;
 var clearSw = false;
 
+var pickedArr = [ ];
+var transSw = false;
+
 window.onload = function init() {
 	
-	var canvas = document.getElementById( "gl-canvas" );
+	canvas = document.getElementById( "gl-canvas" );
 	
     gl = WebGLUtils.setupWebGL( canvas );
     if ( !gl ) { alert( "WebGL isn't available" ); }
@@ -105,6 +109,7 @@ function getWorldCintervals(){
 <button onclick = "drawUIButtons('0')">Pick</button>
 */
 function drawUIButtons(switchInt){
+	
 	switch(switchInt){
 		case '0':
 			pointSw = false;
@@ -112,11 +117,13 @@ function drawUIButtons(switchInt){
 			triSw = false;
 			pickSw = true;
 			clearSw = false;
+			transSw = false;
 			mousePick();
 			setPoints();
 			clearModel();
 			setLines();
 			setTriangles();
+			translate();
 			break;
 		case '1':
 			pointSw = true;
@@ -124,11 +131,13 @@ function drawUIButtons(switchInt){
 			triSw = false;
 			pickSw = false;
 			clearSw = false;
+			transSw = false;
 			mousePick();
 			setPoints();
 			clearModel();
 			setLines();
 			setTriangles();
+			translate();
 			break;
 		case '2':
 			pointSw = false;
@@ -136,11 +145,13 @@ function drawUIButtons(switchInt){
 			triSw = false;
 			pickSw = false;
 			clearSw = true;
+			transSw = false;
 			mousePick();
 			setPoints();
 			clearModel();
 			setLines();
 			setTriangles();
+			translate();
 			break;
 		case '3':
 			pointSw = false;
@@ -148,11 +159,13 @@ function drawUIButtons(switchInt){
 			triSw = false;
 			pickSw = false;
 			clearSw = false;
+			transSw = false;
 			mousePick();
 			setPoints();
 			clearModel();
 			setLines();
 			setTriangles();
+			translate();
 			break;
 		case '4':
 			pointSw = false;
@@ -160,13 +173,28 @@ function drawUIButtons(switchInt){
 			triSw = true;
 			pickSw = false;
 			clearSw = false;
+			transSw = false;
 			mousePick();
 			setPoints();
 			clearModel();
 			setLines();
 			setTriangles();
+			translate();
 			break;
-		
+		case '5':
+			pointSw = false;
+			lineSw = false;
+			triSw = false;
+			pickSw = false;
+			clearSw = false;
+			transSw = true;
+			mousePick();
+			setPoints();
+			clearModel();
+			setLines();
+			setTriangles();
+			translate();
+			break;
 		default:
 			console.log('Something is wrong with the Switch');
 	}
@@ -185,7 +213,7 @@ function mousePick(){
 			wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
 			wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
 			
-			var pntString = "";
+			var pntString = ""; //txt.value = "Mouse Coords: x: " + wx + ", y: " + wy;
 			
 			var txt = document.getElementById('txtArea');
 			
@@ -201,8 +229,41 @@ function mousePick(){
 					
 					txt.value = "Picked Point: " + pntString;
 					
+					pickedArr = [1, points[i], i];
+					return pickedArr;
 				}
 			}
+			for(var i = 0; i < lines.length; i++){
+				var pntX = lines[i][0];
+				var pntY = lines[i][1];
+				
+				var distance = Math.sqrt(Math.pow((wx - pntX), 2) + Math.pow((wy - pntY), 2));
+				
+				if(distance < 15){
+					pntString = Math.floor((i/2) + 1) + " ";
+					console.log(pntString);
+					
+					txt.value = "Picked Line: " + pntString;
+					
+					pickedArr = [2, lines[i], i];
+				}
+			}
+			for(var i = 0; i < triangles.length; i++){
+				var pntX = triangles[i][0];
+				var pntY = triangles[i][1];
+				
+				var distance = Math.sqrt(Math.pow((wx - pntX), 2) + Math.pow((wy - pntY), 2));
+				
+				if(distance < 15){
+					pntString = Math.floor((i/3) + 1) + " ";
+					console.log(pntString);
+					
+					txt.value = "Picked Triangle: " + pntString;
+					
+					pickedArr = [3, triangles[i], i];
+				}
+			}
+			//console.log("Mouse Pick",pickedArr);
 			render();
 		}
 
@@ -215,7 +276,7 @@ function setPoints(){
 	if(pointSw){
 		var canvas = document.getElementById( "gl-canvas" );
 		canvas.onclick = function(event){
-				console.log("Point switched on.");
+				console.log("Set Points.");
 				var x = event.clientX - 8;
 				var y = event.clientY - 8;
 				var wx;
@@ -230,7 +291,6 @@ function setPoints(){
 						var point = vec2(wx, wy);
 						points.push(point);
 						pColors.push(vec4(1.0, 0.0, 0.0, 1.0));
-						console.log("Here");
 					}
 				}
 				console.log(points);
@@ -252,7 +312,7 @@ function setLines(){
 	if(lineSw){
 		var canvas = document.getElementById( "gl-canvas" );
 		canvas.onclick = function(event){
-				console.log("Point switched on.");
+				console.log("Set Lines.");
 				var x = event.clientX - 8;
 				var y = event.clientY - 8;
 				var wx;
@@ -287,7 +347,7 @@ function setTriangles(){
 	if(triSw){
 		var canvas = document.getElementById( "gl-canvas" );
 		canvas.onclick = function(event){
-				console.log("Point switched on.");
+				console.log("Set Triangles.");
 				var x = event.clientX - 8;
 				var y = event.clientY - 8;
 				var wx;
@@ -324,6 +384,59 @@ function clearModel(){
 		render();
 	}else{
 		console.log("cm switched off");
+	}
+}
+
+function translate(){
+	
+	if(transSw){
+		var pickedPoint;
+		
+		p = pickedArr;
+		
+		canvas.onmousedown = function(){
+			
+			pickedPoint = p[1];
+			
+			var x = event.clientX - 8;
+			var y = event.clientY - 8;
+			var wx;
+			var wy;
+	
+			wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
+			wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
+			
+			
+			
+			switch(p[0]){
+				case 1:
+					var tx = wx - points[p[2]][0];
+					var ty = wy - points[p[2]][1];
+					console.log("tx ", tx, "ty ", ty);
+					console.log("wx ", wx, "wy ", wy);
+					console.log("point X ", points[p[2]][0], "point y", points[p[2]][1]);
+					var trans = transl3x3(tx, ty);
+					console.log(trans);
+					console.log(p);
+			
+					console.log(points[p[2]]);
+					var newPoint = matVecMult(trans, [points[p[2]][0], 
+										points[p[2]][1], 1]);
+					console.log(newPoint);
+					points[p[2]] = [newPoint[0], newPoint[1]];
+					render();
+					break;
+				case 2:
+					break;
+				case 3:
+					break;
+				default:
+					break;
+			}
+		}
+		
+	}else{
+		console.log("trans off");
 	}
 }
 
