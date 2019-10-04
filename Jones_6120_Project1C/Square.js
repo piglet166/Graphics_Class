@@ -33,6 +33,8 @@ var triSw = false;
 var pickSw = false;
 var clearSw = false;
 
+var transFlag = false;
+
 var pickedArr = [ ];
 var transSw = false;
 
@@ -391,11 +393,10 @@ function translate(){
 	
 	if(transSw){
 		var pickedPoint;
-		var transFlag = false;
 		var p = pickedArr;
 		
 		canvas.onmousedown = function(){
-			transFlag = true;
+			if(transSw){transFlag = true;}
 			console.log("worked");
 		}
 		
@@ -439,11 +440,7 @@ function translate(){
 												lines[p[2]][1], 1]);
 							console.log(newPoint);
 							lines[p[2]] = [newPoint[0], newPoint[1]];
-							
-							var tx2 = wx - lines[p[2] + 1][0];
-							var ty2 = wy - lines[p[2] + 1][1];
-							var trans = transl3x3(tx2, ty2);
-					
+												
 							var newPoint2 = matVecMult(trans, [lines[p[2] + 1][0], 
 												lines[p[2] + 1][1], 1]);
 							lines[p[2] + 1] = [newPoint2[0], newPoint2[1]];
@@ -457,12 +454,8 @@ function translate(){
 							var newPoint = matVecMult(trans, [lines[p[2]][0], 
 												lines[p[2]][1], 1]);
 							lines[p[2]] = [newPoint[0], newPoint[1]];
-							
-							var tx2 = wx - lines[p[2] - 1][0];
-							var ty2 = wy - lines[p[2] - 1][1];
-							var trans2 = transl3x3(tx2, ty2);
-					
-							var newPoint2 = matVecMult(trans2, [lines[p[2] - 1][0], 
+												
+							var newPoint2 = matVecMult(trans, [lines[p[2] - 1][0], 
 												lines[p[2] - 1][1], 1]);
 							lines[p[2] - 1] = [newPoint2[0], newPoint2[1]];
 							
@@ -471,13 +464,27 @@ function translate(){
 						render();
 						break;
 					case 3:
+					
+						var ind = p[2];
+						ind = (Math.floor(ind/3)) * 3;
+						
+						console.log(ind);
+					
 						var tx = wx - triangles[p[2]][0];
 						var ty = wy - triangles[p[2]][1];
 						var trans = transl3x3(tx, ty);
 						
-						var newPoint = matVecMult(trans, [triangles[p[2]][0], 
-											triangles[p[2]][1], 1]);
-						triangles[p[2]] = [newPoint[0], newPoint[1]];
+						var newPoint = matVecMult(trans, [triangles[ind][0], 
+											triangles[ind][1], 1]);
+						triangles[ind] = [newPoint[0], newPoint[1]];
+						
+						var newPoint2 = matVecMult(trans, [triangles[ind + 1][0],
+											triangles[ind + 1][1], 1]);
+						triangles[ind + 1] = [newPoint2[0], newPoint2[1]];
+						
+						var newPoint3 = matVecMult(trans, [triangles[ind + 2][0],
+											triangles[ind + 2][1], 1]);
+						triangles[ind + 2] = [newPoint3[0], newPoint3[1]];
 						render();
 						break;
 					default:
