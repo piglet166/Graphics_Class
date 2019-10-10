@@ -637,27 +637,47 @@ function rotate(){
 						render();
 						break;
 					case 3:
-					
 						var ind = p[2];
-						ind = (Math.floor(ind/3)) * 3;
+						ind = (Math.floor(ind/3)) * 3;		
 						
-						console.log(ind);
-					
-						var tx = wx - triangles[p[2]][0];
-						var ty = wy - triangles[p[2]][1];
-						var trans = transl3x3(tx, ty);
+						var midPointX = (triangles[ind][0] + triangles[ind + 1][0],
+											triangles[ind + 2][0]) / 3;
+						var midPointY = (triangles[ind][1] + triangles[ind + 1][1],
+											triangles[ind + 2][1]) / 3;
+						
+						
+						var trans = transl3x3(-midPointX, -midPointY);
+						
+						var rotation = rotate3x3(angle);
+						
+						var trans1 = transl3x3(midPointX, midPointY);
 						
 						var newPoint = matVecMult(trans, [triangles[ind][0], 
 											triangles[ind][1], 1]);
-						triangles[ind] = [newPoint[0], newPoint[1]];
+						newPoint = matVecMult(rotation, [newPoint[0], 
+											newPoint[1], 1]);
+						newPoint = matVecMult(trans1, [newPoint[0], 
+											newPoint[1], 1]);
+						
 						
 						var newPoint2 = matVecMult(trans, [triangles[ind + 1][0],
 											triangles[ind + 1][1], 1]);
-						triangles[ind + 1] = [newPoint2[0], newPoint2[1]];
+						newPoint2 = matVecMult(rotation, [newPoint2[0], 
+											newPoint2[1], 1]);
+						newPoint2 = matVecMult(trans1, [newPoint2[0], 
+											newPoint2[1], 1]);					
 						
 						var newPoint3 = matVecMult(trans, [triangles[ind + 2][0],
 											triangles[ind + 2][1], 1]);
+						newPoint3 = matVecMult(rotation, [newPoint3[0], 
+											newPoint3[1], 1]);
+						newPoint3 = matVecMult(trans1, [newPoint3[0], 
+											newPoint3[1], 1]);							
+						
+						triangles[ind] = [newPoint[0], newPoint[1]];
+						triangles[ind + 1] = [newPoint2[0], newPoint2[1]];
 						triangles[ind + 2] = [newPoint3[0], newPoint3[1]];
+						
 						render();
 						break;
 					default:
@@ -761,24 +781,46 @@ function scale(){
 					
 						var ind = p[2];
 						ind = (Math.floor(ind/3)) * 3;
-						
-						console.log(ind);
+												
+						var midPointX = (triangles[ind][0] + triangles[ind + 1][0],
+											triangles[ind + 2][0]) / 3;
+						var midPointY = (triangles[ind][1] + triangles[ind + 1][1],
+											triangles[ind + 2][1]) / 3;
 					
 						var tx = wx - triangles[p[2]][0];
 						var ty = wy - triangles[p[2]][1];
-						var trans = transl3x3(tx, ty);
+						
+						var trans = transl3x3(-midPointX, -midPointY);
+						var scale = scale3x3(magnify, magnify);
+						var trans1 = transl3x3(midPointX, midPointY);
+						
 						
 						var newPoint = matVecMult(trans, [triangles[ind][0], 
 											triangles[ind][1], 1]);
-						triangles[ind] = [newPoint[0], newPoint[1]];
+						newPoint = matVecMult(scale, [newPoint[0], 
+											newPoint[1], 1]);
+						newPoint = matVecMult(trans1, [newPoint[0], 
+											newPoint[1], 1]);
+						
 						
 						var newPoint2 = matVecMult(trans, [triangles[ind + 1][0],
 											triangles[ind + 1][1], 1]);
-						triangles[ind + 1] = [newPoint2[0], newPoint2[1]];
-						
+						newPoint2 = matVecMult(scale, [newPoint2[0], 
+											newPoint2[1], 1]);
+						newPoint2 = matVecMult(trans1, [newPoint2[0], 
+											newPoint2[1], 1]);	
+
 						var newPoint3 = matVecMult(trans, [triangles[ind + 2][0],
 											triangles[ind + 2][1], 1]);
-						triangles[ind + 2] = [newPoint3[0], newPoint3[1]];
+						newPoint3 = matVecMult(scale, [newPoint3[0], 
+											newPoint3[1], 1]);
+						newPoint3 = matVecMult(trans1, [newPoint3[0], 
+											newPoint3[1], 1]);	
+											
+						
+						triangles[ind] = [newPoint[0], newPoint[1]];
+						triangles[ind + 1] = [newPoint2[0], newPoint2[1]];
+						
 						render();
 						break;
 					default:
@@ -788,7 +830,7 @@ function scale(){
 		}
 		
 		canvas.onmouseup = function(){
-			transFlag = false;
+			scaleFlag = false;
 			console.log("worked 2");
 		}
 		
