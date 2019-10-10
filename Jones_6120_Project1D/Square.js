@@ -588,15 +588,22 @@ function rotate(){
 				
 				switch(p[0]){
 					case 1:
-						/*var tx = wx - points[p[2]][0];
-						var ty = wy - points[p[2]][1];
-						var rotation = rotate3x3(angle);
+						var centerPointX = 512/2;
+						var centerPointY = 512/2;
 						
-				
-						var newPoint = matVecMult(trans, [points[p[2]][0], 
-											points[p[2]][1], 1]);
-						points[p[2]] = [newPoint[0], newPoint[1]];
-						render();*/
+						var ind = p[2];
+						
+						var trans = transl3x3(-centerPointX, -centerPointY);
+						var rotation = rotate3x3(angle);
+						var trans1 = transl3x3(centerPointX, centerPointY);
+						
+						var newPoint = matVecMult(trans, [points[ind][0],
+														points[ind][1], 1]);
+						newPoint = matVecMult(rotation, [newPoint[0], 
+												newPoint[1], 1]);
+						newPoint = matVecMult(trans1, [newPoint[0],
+												newPoint[1], 1]);
+						
 						break;
 					case 2:
 						var ind = p[2];
@@ -732,15 +739,7 @@ function scale(){
 				
 				switch(p[0]){
 					case 1:
-						/*var tx = wx - points[p[2]][0];
-						var ty = wy - points[p[2]][1];
-						var trans = transl3x3(tx, ty);
 						
-				
-						var newPoint = matVecMult(trans, [points[p[2]][0], 
-											points[p[2]][1], 1]);
-						points[p[2]] = [newPoint[0], newPoint[1]];
-						render();*/
 						break;
 					case 2:
 						var ind = p[2];
