@@ -584,7 +584,7 @@ function rotate(){
 				wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
 				wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
 				
-				var angle = wx - clickX;
+				var angle = 1. + (wx - clickX) * 0.1;
 				
 				switch(p[0]){
 					case 1:
@@ -604,6 +604,9 @@ function rotate(){
 						newPoint = matVecMult(trans1, [newPoint[0],
 												newPoint[1], 1]);
 						
+						points[ind] = [newPoint[0], newPoint[1]];
+						
+						render();
 						break;
 					case 2:
 						var ind = p[2];
