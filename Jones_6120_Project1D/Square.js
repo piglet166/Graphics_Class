@@ -645,15 +645,16 @@ function rotate(){
 						break;
 					case 3:
 						var ind = p[2];
-						ind = (Math.floor(ind/3)) * 3;		
+						ind = (Math.floor(ind/3)) * 3;
 						
-						var midPointX = (triangles[ind][0] + triangles[ind + 1][0],
+						var midPointX = (triangles[ind][0] + triangles[ind + 1][0] +
 											triangles[ind + 2][0]) / 3;
-						var midPointY = (triangles[ind][1] + triangles[ind + 1][1],
+						var midPointY = (triangles[ind][1] + triangles[ind + 1][1] +
 											triangles[ind + 2][1]) / 3;
 						
 						
 						var trans = transl3x3(-midPointX, -midPointY);
+						console.log("Midpoint " + midPointX + " " + midPointY);
 						
 						var rotation = rotate3x3(angle);
 						
@@ -735,7 +736,7 @@ function scale(){
 				wx = WX_min + ((x-0)/(512)) * (WX_max - WX_min);
 				wy = WY_min + ((y-0)/(512)) * (WY_max - WY_min);
 								
-				var magnify = wx - clickX;
+				var magnify = 1. + (wx - clickX) * 0.001;
 				
 				switch(p[0]){
 					case 1:
@@ -769,7 +770,7 @@ function scale(){
 											newPoint2[1], 1]);
 						newPoint2 = matVecMult(trans1, [newPoint2[0], 
 											newPoint2[1], 1]);					
-											
+						console.log("NewPoint1: " + newPoint + " Newpoint2 " + newPoint2);			
 						
 						lines[ind] = [newPoint[0], newPoint[1]];
 						lines[ind + 1] = [newPoint2[0], newPoint2[1]];
@@ -781,9 +782,9 @@ function scale(){
 						var ind = p[2];
 						ind = (Math.floor(ind/3)) * 3;
 												
-						var midPointX = (triangles[ind][0] + triangles[ind + 1][0],
+						var midPointX = (triangles[ind][0] + triangles[ind + 1][0] +
 											triangles[ind + 2][0]) / 3;
-						var midPointY = (triangles[ind][1] + triangles[ind + 1][1],
+						var midPointY = (triangles[ind][1] + triangles[ind + 1][1] +
 											triangles[ind + 2][1]) / 3;
 					
 						var tx = wx - triangles[p[2]][0];
@@ -819,6 +820,7 @@ function scale(){
 						
 						triangles[ind] = [newPoint[0], newPoint[1]];
 						triangles[ind + 1] = [newPoint2[0], newPoint2[1]];
+						triangles[ind + 2] = [newPoint3[0], newPoint3[1]];
 						
 						render();
 						break;
