@@ -7,7 +7,7 @@ var compiled;
 var selection = 'x';
 
 // count of vertices
-var NumCubeVertices = 36;
+var NumCubeVertices = 36;  //????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
 
 // triangle vertices and colors
 var tri_verts  = []; 
@@ -99,6 +99,14 @@ function createColorCube () {
 	createQuad( 5, 4, 0, 1 );
 }
 
+function createColorPyramid(){
+	createQuad( x, x, x, x );
+	createTriangle( x, x, x );
+	createTriangle( x, x, x );
+	createTriangle( x, x, x );
+	createTriangle( x, x, x );
+}
+
 function createQuad (a, b, c, d) {
 	var vertices  = getCubeVertices();
 	var vertex_colors  = getCubeVertexColors();
@@ -114,16 +122,33 @@ function createQuad (a, b, c, d) {
 	}
 }
 
+function createTriangle(a, b, c){
+	var verticies = getCubeVertexColors();
+	var vertex_colors = getCubeVertexColors();
+	
+	var indices = [ a, b, c ];
+	
+	for(var i = 0; i < indices.length; ++i){
+		verts.push(vertices[indices[i]]);
+		vert_colors.push(vertex_colors[indices[i]]);
+	}
+}
+
 function getCubeVertices() {
 	return [
-        vec3( -0.25, -0.25,  0.25 ),
-        vec3( -0.25,  0.25,  0.25 ),
-        vec3(  0.25,  0.25,  0.25 ),
-        vec3(  0.25, -0.25,  0.25 ),
-        vec3( -0.25, -0.25,  -0.25 ),
-        vec3( -0.25,  0.25,  -0.25 ),
-        vec3(  0.25,  0.25,  -0.25 ),
-        vec3(  0.25, -0.25,  -0.25 )
+        vec3( -0.25, -0.25,   0.25 ),//0  Left, lower, deep 
+        vec3( -0.25,  0.25,   0.25 ),//1  Left, top, deep
+        vec3(  0.25,  0.25,   0.25 ),//2  Right, top, deep
+        vec3(  0.25, -0.25,   0.25 ),//3  Right, lower, deep
+        vec3( -0.25, -0.25,  -0.25 ),//4  Left, lower, shallow
+        vec3( -0.25,  0.25,  -0.25 ),//5  Left, top, shallow
+        vec3(  0.25,  0.25,  -0.25 ),//6  Right, top, shallow
+        vec3(  0.25, -0.25,  -0.25 ),//7  Right, lower, shallow
+		vec3(  0.0,   0.25,   0.0  ),//8  Top center point
+		vec3( -0.25,  0.75,  -0.25 ),//9  base left shallow
+		vec3( -0.25,  0.75,   0.25 ),//10 base left deep
+		vec3(  0.25,  0.75,   0.25 ),//11 base right deep
+		vec3(  0.25,  0.75,  -0.25 ) //12 base right shallow
     ];
 }
 function getCubeVertexColors() {
