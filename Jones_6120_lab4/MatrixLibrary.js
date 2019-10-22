@@ -22,6 +22,15 @@ function transl3x3(tx, ty){
 	return trans;
 }
 
+function transl4x4(tx, ty, tz){
+	trans = [ 1, 0, 0, tx,
+			  0, 1, 0, ty,
+			  0, 0, 1, tz,
+			  0, 0, 0,  1 ];
+			  
+	return trans;
+}
+
 //returns a 3x3 rotation matrix that rotates by 'angle' (note that if the angle is passed in degrees, 
 //it needs to be converted into radians prior to applying trig functions (use the Javascript Math 
 //package to use the trig functions)
@@ -38,6 +47,10 @@ function rotate3x3(angle){
 	return retRot;
 }
 
+function rotate4x4(angle, axis){
+	
+}
+
 //returns a 3x3 scale matrix for scaling by sx, sy along the X and Y axes.
 function scale3x3(sx, sy){
 	var retScale = [ sx,  0,  0,
@@ -45,6 +58,10 @@ function scale3x3(sx, sy){
 					  0,  0,  1 ];
 					  
 	return retScale;
+}
+
+function scale4x4(sx, sy, sz){
+	
 }
 
 //computes and returns the transformed vector V'= M*V,  where M is a 3x3 matrix and V is

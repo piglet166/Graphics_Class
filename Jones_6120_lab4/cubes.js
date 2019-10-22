@@ -7,7 +7,7 @@ var compiled;
 var selection = 'x';
 
 // count of vertices
-var NumCubeVertices = 36;  //????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
+var NumCubeVertices = 52;  //36?
 
 // triangle vertices and colors
 var tri_verts  = []; 
@@ -40,6 +40,7 @@ window.onload = function init() {
 
 	// TODO: create the tetrahedron above it
 	// TODO : You will similarly create a tetrahedron  and call it here
+	createColorPyramid();
 
     // buffers to hold cube vertices and its colors
     vBuffer = gl.createBuffer();
@@ -100,14 +101,14 @@ function createColorCube () {
 }
 
 function createColorPyramid(){
-	createQuad( x, x, x, x );
-	createTriangle( x, x, x );
-	createTriangle( x, x, x );
-	createTriangle( x, x, x );
-	createTriangle( x, x, x );
+	createQuad( 9, 10, 11, 12 );
+	createTriangle(  9, 12, 8 );
+	createTriangle(  9, 10, 8 );
+	createTriangle( 10, 11, 8 );
+	createTriangle( 11, 12, 8 );
 }
 
-function createQuad (a, b, c, d) {
+/*function createQuad (a, b, c, d) {
 	var vertices  = getCubeVertices();
 	var vertex_colors  = getCubeVertexColors();
 
@@ -120,19 +121,7 @@ function createQuad (a, b, c, d) {
 		verts.push(vertices[indices[i]]);
 		vert_colors.push(vertex_colors[indices[i]]);
 	}
-}
-
-function createTriangle(a, b, c){
-	var verticies = getCubeVertexColors();
-	var vertex_colors = getCubeVertexColors();
-	
-	var indices = [ a, b, c ];
-	
-	for(var i = 0; i < indices.length; ++i){
-		verts.push(vertices[indices[i]]);
-		vert_colors.push(vertex_colors[indices[i]]);
-	}
-}
+}*/
 
 function getCubeVertices() {
 	return [
@@ -160,7 +149,12 @@ function getCubeVertexColors() {
         [ 0.0, 0.0, 1.0, 1.0 ],  // blue
         [ 1.0, 0.0, 1.0, 1.0 ],  // magenta
         [ 1.0, 1.0, 1.0, 1.0 ],  // white
-        [ 0.0, 1.0, 1.0, 1.0 ]   // cyan
+        [ 0.0, 1.0, 1.0, 1.0 ],  // cyan
+		[ 1.0, 0.0, 0.0, 1.0 ],  // red
+        [ 1.0, 1.0, 0.0, 1.0 ],  // yellow
+        [ 0.0, 1.0, 0.0, 1.0 ],  // green
+        [ 0.0, 0.0, 1.0, 1.0 ],  // blue
+        [ 1.0, 0.0, 1.0, 1.0 ],  // magenta
     ];
 }
 
@@ -179,7 +173,19 @@ function createQuad (a, b, c, d) {
 	}
 }
 
-function getCubeVertices() {
+function createTriangle(a, b, c){
+	var vertices = getCubeVertices();
+	var vertex_colors = getCubeVertexColors();
+	
+	var indices = [ a, b, c ];
+	
+	for(var i = 0; i < indices.length; ++i){
+		tri_verts.push(vertices[indices[i]]);
+		tri_colors.push(vertex_colors[indices[i]]);
+	}
+}
+
+/*function getCubeVertices() {
 	return [
         vec3( -0.25, -0.25,  0.25 ),
         vec3( -0.25,  0.25,  0.25 ),
@@ -202,7 +208,7 @@ function getCubeVertexColors() {
         [ 1.0, 1.0, 1.0, 1.0 ],  // white
         [ 0.0, 1.0, 1.0, 1.0 ]   // cyan
     ];
-}
+}*/
 
 
 // function that does all shader initializations and 
