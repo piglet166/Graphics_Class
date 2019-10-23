@@ -112,11 +112,12 @@ function scale4x4(sx, sy, sz){
 //computes and returns the transformed vector V'= M*V,  where M is a 3x3 matrix and V is
 //a 3 element vector
 function matVecMult(M, V){
-	var retV = [ 0,0,0];
+	var retV = [ 0,0,0,0];
 	
 	retV[0] = (V[0] * M[0]) + (V[1] * M[1]) + (V[2] * M[2]);
 	retV[1] = (V[0] * M[3]) + (V[1] * M[4]) + (V[2] * M[5]);
 	retV[2] = (V[0] * M[6]) + (V[1] * M[7]) + (V[2] * M[8]);
+	retV[3] = (V[0] * M[9]) + (V[1] * M[10]) + (V[2] * M[11]);
 	
 	return retV;
 }

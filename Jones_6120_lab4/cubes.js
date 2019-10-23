@@ -84,16 +84,14 @@ function render(){
 	
 	// x rotation : cube 
 	// Your code to rotate the cube about any of the axes will go here
-	/*var axis = userInput;
+	var axis = userInput;
 	
 	rot = rotate4x4(angle, axis);
 	
 	for(var i = 0; i < tri_verts.length; i+=3){
+		M_cube = matVecMult(rot, [tri_verts[i], tri_verts[i+1], tri_verts[i+2], 1]);
+	}
 		
-		tri_verts[i] = matMult([tri_verts[i], tri_verts[i+1], tri_verts[i+2], 1], rot);
-
-	}*/
-	
 	// make the tetra rotate about itself faster
 	M_cube = identity4();
 
