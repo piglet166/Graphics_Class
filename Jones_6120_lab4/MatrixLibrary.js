@@ -49,6 +49,40 @@ function rotate3x3(angle){
 
 function rotate4x4(angle, axis){
 	
+	var c = Math.cos( radians(angle) );
+    var s = Math.sin( radians(angle) );
+	var selAxis;
+	
+	switch(axis){
+		case '1':
+			selAxis = [ c, -s, 0, 0, 
+						s,  c, 0, 0,
+						0,  0, 0, 0,
+						0,  0, 1, 0, 
+						0,  0, 0, 1 ];
+        break;
+
+        case '2':
+			selAxis = [ 1, 0,  0, 0,
+						0, c, -s, 0, 
+						0, s,  c, 0,
+						0, 0,  0, 1 ];
+        break;
+
+        case '3':
+           	selAxis = [  c, 0, s, 0, 
+						 0, 1, 0, 0, 
+						-s, 0, c, 0,
+						 0, 0, 0, 1 ];
+		break;
+			
+		default:
+			console.log("broken");
+		break;
+	}
+	
+
+    return selAxis;
 }
 
 //returns a 3x3 scale matrix for scaling by sx, sy along the X and Y axes.
@@ -61,7 +95,18 @@ function scale3x3(sx, sy){
 }
 
 function scale4x4(sx, sy, sz){
-	
+	if ( Array.isArray(x) && x.length == 3 ) {
+        sz = x[2];
+        sy = x[1];
+        sx = x[0];
+    }
+
+    var result = mat4();
+    result[0][0] = sx;
+    result[1][1] = sy;
+    result[2][2] = sz;
+
+    return result;
 }
 
 //computes and returns the transformed vector V'= M*V,  where M is a 3x3 matrix and V is
@@ -79,18 +124,45 @@ function matVecMult(M, V){
 //Do backwards
 //computes the product of M1 and M2, which are both 3x3 matrices, resulting in M' = M1*M2
 function matMult(M1, M2){
-	var retM;
-	
-	retM[0] = (M1[0] * M2[0]) + (M1[1] * M2[3]) + (M1[2] * M2[6]);
-	retM[1] = (M1[0] * M2[1]) + (M1[1] * M2[4]) + (M1[2] * M2[7]);
-	retM[2] = (M1[0] * M2[2]) + (M1[1] * M2[5]) + (M1[2] * M2[8]);
-	retM[3] = (M1[3] * M2[0]) + (M1[4] * M2[3]) + (M1[5] * M2[6]);
-	retM[4] = (M1[3] * M2[1]) + (M1[4] * M2[4]) + (M1[5] * M2[7]);
-	retM[5] = (M1[3] * M2[2]) + (M1[4] * M2[5]) + (M1[5] * M2[8]);
-	retM[6] = (M1[6] * M2[0]) + (M1[7] * M2[3]) + (M1[8] * M2[6]);
-	retM[7] = (M1[6] * M2[1]) + (M1[7] * M2[4]) + (M1[8] * M2[7]);
-	retM[8] = (M1[6] * M2[2]) + (M1[7] * M2[5]) + (M1[8] * M2[8]);
-	
-	return retM;
+	var result = [];
+
+    if ( M1.matrix && M2.matrix ) {
+        if ( M1.length != M2.length ) {
+            throw "mult(): trying to add matrices of different dimensions";
+        }
+
+        for ( var i = 0; i < M1.length; ++i ) {
+            if ( M1[i].length != M2[i].length ) {
+                throw "mult(): trying to add matrices of different dimensions";
+            }
+        }
+
+        for ( var i = 0; i < M1.length; ++i ) {
+            result.push( [] );
+
+            for ( var j = 0; j < M2.length; ++j ) {
+                var sum = 0.0;
+                for ( var k = 0; k < M1.length; ++k ) {
+                    sum += M1[i][k] * M2[k][j];
+                }
+                result[i].push( sum );
+            }
+        }
+
+        result.matrix = true;
+
+        return result;
+    }
+    else {
+        if ( M1.length != M2.length ) {
+            throw "mult(): vectors are not the same dimension";
+        }
+
+        for ( var i = 0; i < M1.length; ++i ) {
+            result.push( M1[i] * M2[i] );
+        }
+
+        return result;
+    }
 }
 

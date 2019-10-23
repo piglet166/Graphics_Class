@@ -17,6 +17,9 @@ var vColor, vPosition
 
 var M_Loc;
 
+var angle;
+var userInput = '1';
+
 // all initializations
 window.onload = function init() {
     // get canvas handle
@@ -77,9 +80,20 @@ function render(){
 
 	var rot, transl, M_cube, M_tetra, M;
 	
+	angle += .2;
+	
 	// x rotation : cube 
 	// Your code to rotate the cube about any of the axes will go here
+	/*var axis = userInput;
+	
+	rot = rotate4x4(angle, axis);
+	
+	for(var i = 0; i < tri_verts.length; i+=3){
+		
+		tri_verts[i] = matMult([tri_verts[i], tri_verts[i+1], tri_verts[i+2], 1], rot);
 
+	}*/
+	
 	// make the tetra rotate about itself faster
 	M_cube = identity4();
 
@@ -245,3 +259,26 @@ function createShaders () {
     }
 	return program;
 }
+
+//UserInput(){
+	window.onkeydown = function(event) {
+        var key = String.fromCharCode(event.keyCode);
+        switch(key) {
+          case '1':
+				userInput = '1';
+            break;
+
+          case '2':
+				userInput = '2';
+            break;
+
+          case '3':
+            	userInput = '3';
+			break;
+			
+		  default:
+				console.log("default hit");
+			break;
+        }
+    };
+//}
