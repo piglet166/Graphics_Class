@@ -7,7 +7,7 @@ var compiled;
 var selection = 'x';
 
 // count of vertices
-var NumCubeVertices = 52;  //36?
+var NumCubeVertices = 36;  //36?
 
 // triangle vertices and colors
 var tri_verts  = []; 
@@ -17,7 +17,7 @@ var vColor, vPosition
 
 var M_Loc;
 
-var angle;
+var angle = 0.;
 var userInput = '1';
 
 // all initializations
@@ -69,6 +69,28 @@ window.onload = function init() {
 	M_Loc = gl.getUniformLocation(program, "M_comp");
 
 	gl.enable(gl.DEPTH_TEST);
+	
+	window.onkeydown = function(event) {
+        var key = String.fromCharCode(event.keyCode);
+		console.log(key);
+        switch(key) {
+          case '1':
+				userInput = '1';
+            break;
+
+          case '2':
+				userInput = '2';
+            break;
+
+          case '3':
+            	userInput = '3';
+			break;
+			
+		  default:
+				console.log("default hit");
+			break;
+        }
+    };
 
     render();
 }
@@ -86,17 +108,24 @@ function render(){
 	// Your code to rotate the cube about any of the axes will go here
 	var axis = userInput;
 	
-	rot = rotate4x4(angle, axis);
+	rot = rotate4x4(angle, '1');
+	//rot2 rotate4x4(angle, '3');
 	
-	for(var i = 0; i < tri_verts.length; i+=3){
-		M_cube = matVecMult(rot, [tri_verts[i], tri_verts[i+1], tri_verts[i+2], 1]);
-	}
+	//multiply rot by ro2
+	
+	//scale, rot, transien
+	//mat = (trans, rot);
+	//mat = (mat, scale);
 		
 	// make the tetra rotate about itself faster
-	M_cube = identity4();
+	//M_cube = identity4();
 
-	gl.uniformMatrix4fv(M_Loc, false, flatten(M_cube));
+	gl.uniformMatrix4fv(M_Loc, false, flatten(rot));
 	gl.drawArrays(gl.TRIANGLES, 0, NumCubeVertices );
+	
+	//do same for next cube...
+	//mat = identity4
+	//mat
 
 	requestAnimFrame( render );
 }
@@ -259,24 +288,5 @@ function createShaders () {
 }
 
 //UserInput(){
-	window.onkeydown = function(event) {
-        var key = String.fromCharCode(event.keyCode);
-        switch(key) {
-          case '1':
-				userInput = '1';
-            break;
-
-          case '2':
-				userInput = '2';
-            break;
-
-          case '3':
-            	userInput = '3';
-			break;
-			
-		  default:
-				console.log("default hit");
-			break;
-        }
-    };
+	
 //}

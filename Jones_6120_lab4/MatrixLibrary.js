@@ -49,6 +49,8 @@ function rotate3x3(angle){
 
 function rotate4x4(angle, axis){
 	
+	console.log(axis);
+	
 	var c = Math.cos( radians(angle) );
     var s = Math.sin( radians(angle) );
 	var selAxis;
@@ -57,7 +59,6 @@ function rotate4x4(angle, axis){
 		case '1':
 			selAxis = [ c, -s, 0, 0, 
 						s,  c, 0, 0,
-						0,  0, 0, 0,
 						0,  0, 1, 0, 
 						0,  0, 0, 1 ];
         break;
