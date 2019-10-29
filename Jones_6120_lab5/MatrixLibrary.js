@@ -1,5 +1,4 @@
 
-
 //returns a 3x3 identy Matrix
 function identity3x3(){
 	var idMtx = new Array(3);
@@ -158,5 +157,78 @@ function matMult(M1, M2){
 	result[15] = (M1[12] * M2[3]) + (M1[13] * M2[7]) + (M1[14] * M2[11]) + (M1[15] * M2[15]); 
 	
 	return result;
+}
+
+function subtractArr(m, n){
+	var difference;
+	
+	for(var i = 0; i < m.length; i++){
+		difference[i] = m[i] - n[i];
+	}
+	
+	return difference;
+}
+
+function CrossProduct(m, n){
+	
+}
+
+function GetPosition(ui){
+	var retPos;
+	
+	switch(ui){
+		case '1':
+			retPos = [0, 0, -1];
+			break;
+		case '2':
+			retPos = [0, 0, 1];
+			break;
+		case '3':
+			retPos = [1, 0, 0];
+			break;
+		case '4':
+			retPos = [-1, 0, 0];
+			break;
+		default:
+			console.log("GetPosition is messed up");
+			break;
+	}
+	
+	return retPos;
+}
+
+//transposed r = right u = up f = forward
+/*
+	
+*/
+
+function lookAt(from, to, tmp){
+	var forward, up, right, tmp;
+	var cameraTrans = [];
+	
+	for (var i = 0; i < 16; i++){
+		cameraTrans[i] = 0;
+	}
+	
+	forward = subtractArr(from - to);
+	right = matMult(tmp, forward);
+	up = matMult(forward, right);
+	
+	cameraTrans[0] = right[0];   //0
+	cameraTrans[1] = right[1];   //1
+	cameraTrans[2] = right[2];   //2
+	cameraTrans[4] = up[0];      //4
+	cameraTrans[5] = up[1];      //5
+	cameraTrans[6] = up[2];      //6
+	cameraTrans[8] = forward[0]; //8
+	cameraTrans[9] = forward[1]; //9
+	cameraTrans[10] = forward[2];//10
+	cameraTrans[12] = from[0];   //12
+	cameraTrans[13] = from[1];   //13
+	cameraTrans[14] = from[2];   //14
+	cameraTrans[15] = 1.;        //15
+	
+	
+	return cameraTrans;
 }
 

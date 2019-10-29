@@ -4,6 +4,7 @@ var myVertexShader = `
 	varying vec4 color;
 
 	uniform mat4 M_comp;
+	uniform mat4 C_comp;
 
 	void main() {
 		gl_Position = M_comp*vPosition;

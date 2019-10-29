@@ -4,7 +4,8 @@ var gl;
 var program;
 var vertexShader, fragmentShader;
 var compiled;
-var selection = 'x';
+var cameraPos;
+var origin = [0, 0, 0];
 
 // count of vertices
 var NumCubeVertices = 36;  //36?
@@ -63,6 +64,7 @@ window.onload = function init() {
 
 	// a location for the matrix to be sent to share with the shader
 	M_Loc = gl.getUniformLocation(program, "M_comp");
+	C_Loc = gl.getUniformLocation(program, "C_comp");
 
 	gl.enable(gl.DEPTH_TEST);
 	
@@ -111,6 +113,8 @@ function render(){
 	//mat = (mat, trans);
 	
 	mat = identity4x4();
+	cameraPos = GetPosition(userInput);
+	var camera = lookAt(cameraPos, origin, [0,1,0]);
 	
 	/*transl = transl4x4(-0.5, 0.5, 0.0);
 	rot = rotate4x4(angle, 'x');
