@@ -171,7 +171,7 @@ function CrossProduct(m, n){
 	var crossProd = [];
 	
 	crossProd[0] = m[1] * n[2] - m[2] * n[1];
-	crossProd[1] = m[0] * n[2] - m[2] * n[0];
+	crossProd[1] = m[2] * n[0] - m[0] * n[2];
 	crossProd[2] = m[0] * n[1] - m[1] * n[0];
 	
 	return crossProd;
@@ -188,10 +188,10 @@ function GetPosition(ui){
 			retPos = [0, 0, 1];
 			break;
 		case '3':
-			retPos = [1, 0, 0];
+			retPos = [-1, 0, 0];
 			break;
 		case '4':
-			retPos = [-1, 0, 0];
+			retPos = [1, 0, 0];
 			break;
 		default:
 			console.log("GetPosition is messed up");
@@ -214,7 +214,7 @@ function lookAt(from, to, tmp){
 		cameraTrans[i] = 0;
 	}
 	
-	forward = subtractArr(to, from);
+	forward = subtractArr(from, to);
 	right = CrossProduct(tmp, forward);
 	up = CrossProduct(forward, right);
 	
@@ -229,9 +229,6 @@ function lookAt(from, to, tmp){
 	cameraTrans[8] = forward[0]; //8
 	cameraTrans[9] = forward[1]; //9
 	cameraTrans[10] = forward[2];//10
-	cameraTrans[12] = from[0];   //12
-	cameraTrans[13] = from[1];   //13
-	cameraTrans[14] = from[2];   //14
 	cameraTrans[15] = 1.;        //15
 	
 	

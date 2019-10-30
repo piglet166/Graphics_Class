@@ -17,6 +17,7 @@ var tri_colors = [];
 var vColor, vPosition
 
 var M_Loc;
+var C_Loc;
 
 var angle = 0.;
 var userInput = '1';
@@ -108,11 +109,10 @@ function render(){
 	
 	mat = identity4x4();
 	cameraPos = GetPosition(userInput);
-	console.log(cameraPos);
 	var camera = lookAt(cameraPos, origin, [0,1,0]);
 	
-	gl.uniformMatrix4fv(M_Loc, false, flatten(transpose4x4(mat)));
-	gl.uniformMatrix4fv(C_Loc, false, flatten(transpose4x4(camera)));
+	gl.uniformMatrix4fv(M_Loc, false, flatten(mat));
+	gl.uniformMatrix4fv(C_Loc, false, camera);
 	gl.drawArrays( gl.TRIANGLES, 0, NumCubeVertices );
 	
 	mat = identity4x4();
