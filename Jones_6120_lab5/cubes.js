@@ -84,6 +84,10 @@ window.onload = function init() {
             	userInput = '3';
 			break;
 			
+		  case '4':
+				userInput = '4';
+			break;
+			
 		  default:
 				console.log("default hit");
 			break;
@@ -102,34 +106,15 @@ function render(){
 
 	var rot, transl, rot2, scal, M_cube, M, mat;
 	
-	// x rotation : cube 
-	// Your code to rotate the cube about any of the axes will go here
-	//var axis = 'y';
-	
-	//rot = rotate4x4(angle, axis);
-	
-	//scale, rot, transl
-	//mat = (scale, rot);
-	//mat = (mat, trans);
-	
 	mat = identity4x4();
 	cameraPos = GetPosition(userInput);
+	console.log(cameraPos);
 	var camera = lookAt(cameraPos, origin, [0,1,0]);
 	
-	/*transl = transl4x4(-0.5, 0.5, 0.0);
-	rot = rotate4x4(angle, 'x');
-	scal = scale4x4(0.5, 0.5, 0.5);
+	gl.uniformMatrix4fv(M_Loc, false, flatten(transpose4x4(mat)));
+	gl.uniformMatrix4fv(C_Loc, false, flatten(transpose4x4(camera)));
+	gl.drawArrays( gl.TRIANGLES, 0, NumCubeVertices );
 	
-	mat = matMult(rot, scal);
-	mat = matMult(mat, transl);*/
-	
-	// make the tetra rotate about itself faster
-	//M_cube = identity4();
-
-	gl.uniformMatrix4fv(M_Loc, false, flatten(mat));
-	gl.drawArrays(gl.TRIANGLES, 0, NumCubeVertices );
-	
-	//do same for next cube...
 	mat = identity4x4();
 	
 	scal = scale4x4(0.5, 0.5, 0.5);
@@ -269,6 +254,24 @@ function createShaders () {
 	return program;
 }
 
-//UserInput(){
-	
-//}
+function identity4() {
+    var m = [];
+    m = [
+            [1.0, 0.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ];
+
+    return m;
+}
+function transpose4x4(m) {
+    var result = [];
+
+    result.push ([m[0][0], m[1][0], m[2][0], m[3][0]]);
+    result.push ([m[0][1], m[1][1], m[2][1], m[3][1]]);
+    result.push ([m[0][2], m[1][2], m[2][2], m[3][2]]);
+    result.push ([m[0][3], m[1][3], m[2][3], m[3][3]]);
+
+    return result;
+}

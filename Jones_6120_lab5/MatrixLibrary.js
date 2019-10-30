@@ -115,8 +115,6 @@ function scale4x4(sx, sy, sz){
     result[5] = sy;
     result[10] = sz;
 	result[15] = 1.;
-	
-	console.log(result);
 
     return result;
 }
@@ -160,7 +158,7 @@ function matMult(M1, M2){
 }
 
 function subtractArr(m, n){
-	var difference;
+	var difference = [];
 	
 	for(var i = 0; i < m.length; i++){
 		difference[i] = m[i] - n[i];
@@ -170,7 +168,13 @@ function subtractArr(m, n){
 }
 
 function CrossProduct(m, n){
+	var crossProd = [];
 	
+	crossProd[0] = m[1] * n[2] - m[2] * n[1];
+	crossProd[1] = m[0] * n[2] - m[2] * n[0];
+	crossProd[2] = m[0] * n[1] - m[1] * n[0];
+	
+	return crossProd;
 }
 
 function GetPosition(ui){
@@ -203,16 +207,18 @@ function GetPosition(ui){
 */
 
 function lookAt(from, to, tmp){
-	var forward, up, right, tmp;
+	var forward, up, right;
 	var cameraTrans = [];
 	
 	for (var i = 0; i < 16; i++){
 		cameraTrans[i] = 0;
 	}
 	
-	forward = subtractArr(from - to);
-	right = matMult(tmp, forward);
-	up = matMult(forward, right);
+	forward = subtractArr(to, from);
+	right = CrossProduct(tmp, forward);
+	up = CrossProduct(forward, right);
+	
+	//console.log(forward);
 	
 	cameraTrans[0] = right[0];   //0
 	cameraTrans[1] = right[1];   //1
