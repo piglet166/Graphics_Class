@@ -66,6 +66,7 @@ window.onload = function init() {
 	// a location for the matrix to be sent to share with the shader
 	M_Loc = gl.getUniformLocation(program, "M_comp");
 	C_Loc = gl.getUniformLocation(program, "C_comp");
+	P_Loc = gl.getUniformLocation(program, "P_comp");
 
 	gl.enable(gl.DEPTH_TEST);
 	
@@ -107,15 +108,24 @@ function render(){
 
 	var rot, transl, rot2, scal, M_cube, M, mat;
 	
+	var r = 0.25;
+	var l = -0.25;
+	var t = 0.25;
+	var b = -0.25;
+	var f = 100;
+	var n = 0.1;
+	
 	mat = identity4x4();
 	cameraPos = GetPosition(userInput);
 	var camera = lookAt(cameraPos, origin, [0,1,0]);
+	var perspective = PerspectiveMatrix(r, l, t, b, f, n);
 	
-	gl.uniformMatrix4fv(M_Loc, false, flatten(mat));
-	gl.uniformMatrix4fv(C_Loc, false, camera);
+	gl.uniformMatrix4fv(M_Loc, false, flatten(transpose4x4(mat)));
+	gl.uniformMatrix4fv(C_Loc, false, flatten(transpose4x4(camera)));
+	gl.uniformMatrix4fv(P_Loc, false, flatten(transpose4x4(perspective)));
 	gl.drawArrays( gl.TRIANGLES, 0, NumCubeVertices );
 	
-	mat = identity4x4();
+	/*mat = identity4x4();
 	
 	scal = scale4x4(0.5, 0.5, 0.5);
 	transl = transl4x4(0.5, 0.5, -0.2);
@@ -133,7 +143,7 @@ function render(){
 	mat = matMult(scal, transl);
 	
 	gl.uniformMatrix4fv(M_Loc, false, flatten(mat));
-	gl.drawArrays(gl.TRIANGLES, 0, NumCubeVertices );
+	gl.drawArrays(gl.TRIANGLES, 0, NumCubeVertices );*/
 
 	requestAnimFrame( render );
 }

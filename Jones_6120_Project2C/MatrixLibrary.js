@@ -206,32 +206,49 @@ function GetPosition(ui){
 	
 */
 
-function lookAt(from, to, tmp){
-	var forward, up, right;
-	var cameraTrans = [];
+function lookAt( eye, at, up )
+{
+    if ( !Array.isArray(eye) || eye.length != 3) {
+        throw "lookAt(): first parameter [eye] must be an a vec3";
+    }
+
+    if ( !Array.isArray(at) || at.length != 3) {
+        throw "lookAt(): first parameter [at] must be an a vec3";
+    }
+
+    if ( !Array.isArray(up) || up.length != 3) {
+        throw "lookAt(): first parameter [up] must be an a vec3";
+    }
+
+    if ( equal(eye, at) ) {
+        return mat4();
+    }
+
+    var v = normalize( subtract(at, eye) );  // view direction vector
+    var n = normalize( cross(v, up) );       // perpendicular vector
+    var u = normalize( cross(n, v) );        // "new" up vector
+
+    v = negate( v );
+
+    var result = mat4(
+        vec4( n, -dot(n, eye) ),
+        vec4( u, -dot(u, eye) ),
+        vec4( v, -dot(v, eye) ),
+        vec4()
+    );
+
+    return result;
+}
+
+function PerspectiveMatrix(r, l, t, b, f, n){
 	
-	for (var i = 0; i < 16; i++){
-		cameraTrans[i] = 0;
-	}
+	var perM = [ (2*n)/(r-l),   0,            0,            0,
+				  0,           (2*n)/(t-b),   0,            0,
+				  0,            0,          -(f+n)/(f-n), -(2*f*n)/(f-n),
+				  0,            0,           -1,            0,             ];
+			  
+	return perM;
+			  
 	
-	forward = subtractArr(from, to);
-	right = CrossProduct(tmp, forward);
-	up = CrossProduct(forward, right);
-	
-	//console.log(forward);
-	
-	cameraTrans[0] = right[0];   //0
-	cameraTrans[1] = right[1];   //1
-	cameraTrans[2] = right[2];   //2
-	cameraTrans[4] = up[0];      //4
-	cameraTrans[5] = up[1];      //5
-	cameraTrans[6] = up[2];      //6
-	cameraTrans[8] = forward[0]; //8
-	cameraTrans[9] = forward[1]; //9
-	cameraTrans[10] = forward[2];//10
-	cameraTrans[15] = 1.;        //15
-	
-	
-	return cameraTrans;
 }
 
