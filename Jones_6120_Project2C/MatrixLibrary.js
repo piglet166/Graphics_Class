@@ -242,10 +242,10 @@ function lookAt( eye, at, up )
 
 function PerspectiveMatrix(r, l, t, b, f, n){
 	
-	var perM = [ (2*n)/(r-l),   0,            0,            0,
-				  0,           (2*n)/(t-b),   0,            0,
-				  0,            0,          -(f+n)/(f-n), -(2*f*n)/(f-n),
-				  0,            0,           -1,            0,             ];
+	var perM = mat4(vec4((2*n)/(r-l),   0,            0,            0),
+				  vec4(0,           (2*n)/(t-b),   0,            0),
+				  vec4(0,            0,          -(f+n)/(f-n), -(2*f*n)/(f-n)),
+				  vec4(0,            0,           -1,            0)             );
 			  
 	return perM;
 			  

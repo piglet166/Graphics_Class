@@ -18,6 +18,7 @@ var vColor, vPosition
 
 var M_Loc;
 var C_Loc;
+var P_Loc;
 
 var angle = 0.;
 var userInput = '1';
@@ -95,7 +96,8 @@ window.onload = function init() {
 			break;
         }
     };
-
+	
+	console.log(tri_verts);
     render();
 }
 
@@ -113,16 +115,15 @@ function render(){
 	var t = 0.25;
 	var b = -0.25;
 	var f = 100;
-	var n = 0.1;
+	var n = 0.5;
 	
 	mat = identity4x4();
-	cameraPos = GetPosition(userInput);
-	var camera = lookAt(cameraPos, origin, [0,1,0]);
+	//cameraPos = GetPosition(userInput);
+	var camera = lookAt([0,1,-1], origin, [0,1,0]);
 	var perspective = PerspectiveMatrix(r, l, t, b, f, n);
-	
-	gl.uniformMatrix4fv(M_Loc, false, flatten(transpose4x4(mat)));
-	gl.uniformMatrix4fv(C_Loc, false, flatten(transpose4x4(camera)));
-	gl.uniformMatrix4fv(P_Loc, false, flatten(transpose4x4(perspective)));
+	gl.uniformMatrix4fv(M_Loc, false, flatten(mat));
+	gl.uniformMatrix4fv(C_Loc, false, flatten(camera));
+	gl.uniformMatrix4fv(P_Loc, false, flatten(perspective));
 	gl.drawArrays( gl.TRIANGLES, 0, NumCubeVertices );
 	
 	/*mat = identity4x4();
@@ -275,13 +276,22 @@ function identity4() {
 
     return m;
 }
-function transpose4x4(m) {
-    var result = [];
 
-    result.push ([m[0][0], m[1][0], m[2][0], m[3][0]]);
-    result.push ([m[0][1], m[1][1], m[2][1], m[3][1]]);
-    result.push ([m[0][2], m[1][2], m[2][2], m[3][2]]);
-    result.push ([m[0][3], m[1][3], m[2][3], m[3][3]]);
+function transpose( m )
+{
+    if ( !m.matrix ) {
+        return "transpose(): trying to transpose a non-matrix";
+    }
+
+    var result = [];
+    for ( var i = 0; i < m.length; ++i ) {
+        result.push( [] );
+        for ( var j = 0; j < m[i].length; ++j ) {
+            result[i].push( m[j][i] );
+        }
+    }
+
+    result.matrix = true;
 
     return result;
 }
