@@ -89,7 +89,7 @@ function rotate4x4(angle, axis){
 		break;
 	}
 	
-	console.log(selAxis);
+	//console.log(selAxis);
     return selAxis;
 }
 
@@ -182,16 +182,16 @@ function GetPosition(ui){
 	
 	switch(ui){
 		case '1':
-			retPos = [0, 0, -1];
+			retPos = [0, .5, -1];
 			break;
 		case '2':
-			retPos = [0, 0, 1];
+			retPos = [0, .5, 1];
 			break;
 		case '3':
-			retPos = [-1, 0, 0];
+			retPos = [-1, .5, 0];
 			break;
 		case '4':
-			retPos = [1, 0, 0];
+			retPos = [1, .5, 0];
 			break;
 		default:
 			console.log("GetPosition is messed up");

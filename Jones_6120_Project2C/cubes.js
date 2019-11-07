@@ -23,10 +23,27 @@ var P_Loc;
 var angle = 0.;
 var userInput = '1';
 
+var r = 0.25;
+var l = -0.25;
+var t = 0.25;
+var b = -0.25;
+var f = 10;
+var n = 0.1;
+
+var sliderWidth;
+var sliderHeight;
+var sliderNear;
+var sliderFar;
+
 // all initializations
 window.onload = function init() {
     // get canvas handle
     canvas = document.getElementById( "gl-canvas" );
+	
+	sliderFar = document.getElementById("far");
+	sliderNear = document.getElementById("near");
+	sliderHeight = document.getElementById("height");
+	sliderWidth = document.getElementById("width");
 
 	// WebGL Initialization
     gl = WebGLUtils.setupWebGL(canvas, {preserveDrawingBuffer: true} );
@@ -97,6 +114,37 @@ window.onload = function init() {
         }
     };
 	
+	sliderFar.oninput = function() {
+	  var wf = this.value;
+	  
+	  wf = wf/100;
+	  
+	  f = wf;
+	}
+	sliderNear.oninput = function() {
+	  var wn = this.value;
+	  
+	  wn = wn/100;
+	  
+	  n = wn;
+	}
+	sliderHeight.oninput = function() {
+	  var wh = this.value;
+	  
+	  wh = wh/100;
+	  
+	  t = wh;
+	  b = -wh;
+	}
+	sliderWidth.oninput = function() {
+	  var wv = this.value;
+	  
+	  wv = wv/100;
+	  
+	  r = wv;
+	  l = -wv;
+	}
+	
 	console.log(tri_verts);
     render();
 }
@@ -110,16 +158,19 @@ function render(){
 
 	var rot, transl, rot2, scal, M_cube, M, mat;
 	
-	var r = 0.25;
-	var l = -0.25;
-	var t = 0.25;
-	var b = -0.25;
-	var f = 100;
-	var n = 0.5;
-	
 	mat = identity4x4();
-	//cameraPos = GetPosition(userInput);
-	var camera = lookAt([0,1,-1], origin, [0,1,0]);
+	cameraPos = GetPosition(userInput);
+	var camera = lookAt(cameraPos, origin, [0,1,0]);
+	
+	var rotAng = .2;
+	
+	var cosVar = Math.cos(rotAng * Math.PI/180);
+	var sinVar = Math.sin(rotAng * Math.PI/180);
+	
+	var modelViewMatrix = translate(0, 0, -1);
+	modelViewMatrix = matMult(modelViewMatrix, rotate4x4(35.26, 'x'));
+	modelViewMatrix = matMult(modelViewMatrix, rotate4x4(45., 'y'));
+	
 	var perspective = PerspectiveMatrix(r, l, t, b, f, n);
 	gl.uniformMatrix4fv(M_Loc, false, flatten(mat));
 	gl.uniformMatrix4fv(C_Loc, false, flatten(camera));
