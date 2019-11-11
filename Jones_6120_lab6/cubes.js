@@ -18,14 +18,33 @@ var vColor, vPosition
 
 var M_Loc;
 var C_Loc;
+var P_Loc;
 
 var angle = 0.;
 var userInput = '1';
+var eye = [0, 0, -1];
+
+var r = 0.25;
+var l = -0.25;
+var t = 0.25;
+var b = -0.25;
+var f = 10;
+var n = 0.1;
+
+var sliderWidth;
+var sliderHeight;
+var sliderNear;
+var sliderFar;
 
 // all initializations
 window.onload = function init() {
     // get canvas handle
     canvas = document.getElementById( "gl-canvas" );
+	
+	sliderFar = document.getElementById("far");
+	sliderNear = document.getElementById("near");
+	sliderHeight = document.getElementById("height");
+	sliderWidth = document.getElementById("width");
 
 	// WebGL Initialization
     gl = WebGLUtils.setupWebGL(canvas, {preserveDrawingBuffer: true} );
@@ -66,6 +85,7 @@ window.onload = function init() {
 	// a location for the matrix to be sent to share with the shader
 	M_Loc = gl.getUniformLocation(program, "M_comp");
 	C_Loc = gl.getUniformLocation(program, "C_comp");
+	P_Loc = gl.getUniformLocation(program, "P_comp");
 
 	gl.enable(gl.DEPTH_TEST);
 	
@@ -73,19 +93,19 @@ window.onload = function init() {
         var key = String.fromCharCode(event.keyCode);
 		console.log(key);
         switch(key) {
-          case '1':
+          case 'W':
 				userInput = '1';
             break;
 
-          case '2':
+          case 'A':
 				userInput = '2';
             break;
 
-          case '3':
+          case 'S':
             	userInput = '3';
 			break;
 			
-		  case '4':
+		  case 'D':
 				userInput = '4';
 			break;
 			
@@ -94,7 +114,39 @@ window.onload = function init() {
 			break;
         }
     };
-
+	
+	sliderFar.oninput = function() {
+	  var wf = this.value;
+	  
+	  wf = wf/100;
+	  
+	  f = wf;
+	}
+	sliderNear.oninput = function() {
+	  var wn = this.value;
+	  
+	  wn = wn/100;
+	  
+	  n = wn;
+	}
+	sliderHeight.oninput = function() {
+	  var wh = this.value;
+	  
+	  wh = wh/100;
+	  
+	  t = wh;
+	  b = -wh;
+	}
+	sliderWidth.oninput = function() {
+	  var wv = this.value;
+	  
+	  wv = wv/100;
+	  
+	  r = wv;
+	  l = -wv;
+	}
+	
+	console.log(tri_verts);
     render();
 }
 
@@ -111,11 +163,22 @@ function render(){
 	cameraPos = GetPosition(userInput);
 	var camera = lookAt(cameraPos, origin, [0,1,0]);
 	
+	var rotAng = .2;
+	
+	var cosVar = Math.cos(rotAng * Math.PI/180);
+	var sinVar = Math.sin(rotAng * Math.PI/180);
+	
+	var modelViewMatrix = translate(0, 0, -1);
+	modelViewMatrix = matMult(modelViewMatrix, rotate4x4(35.26, 'x'));
+	modelViewMatrix = matMult(modelViewMatrix, rotate4x4(45., 'y'));
+	
+	var perspective = PerspectiveMatrix(r, l, t, b, f, n);
 	gl.uniformMatrix4fv(M_Loc, false, flatten(mat));
-	gl.uniformMatrix4fv(C_Loc, false, camera);
+	gl.uniformMatrix4fv(C_Loc, false, flatten(camera));
+	gl.uniformMatrix4fv(P_Loc, false, flatten(perspective));
 	gl.drawArrays( gl.TRIANGLES, 0, NumCubeVertices );
 	
-	mat = identity4x4();
+	/*mat = identity4x4();
 	
 	scal = scale4x4(0.5, 0.5, 0.5);
 	transl = transl4x4(0.5, 0.5, -0.2);
@@ -133,7 +196,7 @@ function render(){
 	mat = matMult(scal, transl);
 	
 	gl.uniformMatrix4fv(M_Loc, false, flatten(mat));
-	gl.drawArrays(gl.TRIANGLES, 0, NumCubeVertices );
+	gl.drawArrays(gl.TRIANGLES, 0, NumCubeVertices );*/
 
 	requestAnimFrame( render );
 }
@@ -265,13 +328,24 @@ function identity4() {
 
     return m;
 }
-function transpose4x4(m) {
-    var result = [];
 
-    result.push ([m[0][0], m[1][0], m[2][0], m[3][0]]);
-    result.push ([m[0][1], m[1][1], m[2][1], m[3][1]]);
-    result.push ([m[0][2], m[1][2], m[2][2], m[3][2]]);
-    result.push ([m[0][3], m[1][3], m[2][3], m[3][3]]);
+function transpose( m )
+{
+    if ( !m.matrix ) {
+        return "transpose(): trying to transpose a non-matrix";
+    }
+
+    var result = [];
+    for ( var i = 0; i < m.length; ++i ) {
+        result.push( [] );
+        for ( var j = 0; j < m[i].length; ++j ) {
+            result[i].push( m[j][i] );
+        }
+    }
+
+    result.matrix = true;
 
     return result;
 }
+
+//todo add functionalirty to rotate the camera with wasd keys

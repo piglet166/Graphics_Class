@@ -5,9 +5,10 @@ var myVertexShader = `
 
 	uniform mat4 M_comp;
 	uniform mat4 C_comp;
+	uniform mat4 P_comp;
 
 	void main() {
-		gl_Position = C_comp * M_comp*vPosition;
+		gl_Position = P_comp * C_comp * M_comp * vPosition;
 		color = vColor;
 	}
 `;
